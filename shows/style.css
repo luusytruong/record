@@ -1,0 +1,24 @@
+* {
+    font-size: 16px;
+}
+
+:root {
+    --padding-s: 16px;
+    --margin-s: 16px;
+}
+
+body {
+    width: unset;
+    max-width: 1200px;
+}
+
+.form-wrapper {
+    max-width: 400px;
+}
+
+.question-image {
+    max-width: unset;
+}
+.question-head{
+    align-items: flex-start;
+}
