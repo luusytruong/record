@@ -21,6 +21,7 @@
     --margin-s: 12px;
     --margin-m: 16px;
     --margin-l: 20px;
+    --size-s: 28px;
 }
 
 ::selection {
@@ -31,6 +32,7 @@
 body {
     width: 400px;
     height: 100svh;
+    min-height: 400px;
     background-color: #F3F5F6;
     position: relative;
     margin: auto;
@@ -90,12 +92,96 @@ strong {
     }
 }
 
+@keyframes toastShow {
+    0% {
+        transform: translate(-50%, 100%);
+    }
+
+    100% {
+        transform: translate(-50%, calc(var(--padding-s) * -1));
+    }
+}
+
+@keyframes toastHide {
+    0% {
+        transform: translate(-50%, calc(var(--padding-s) * -1));
+    }
+
+    100% {
+        transform: translate(-50%, 100%);
+    }
+}
+
+#toast.successful.animate {
+    animation: toastHide .8s ease forwards;
+}
+
+#toast.error.animate {
+    animation: toastHide .8s ease forwards;
+}
+
+#toast.successful {
+    animation: toastShow .8s ease forwards;
+
+    svg {
+        fill: #00BB00;
+    }
+}
+
+#toast.error {
+    animation: toastShow .8s ease forwards;
+
+    svg {
+        fill: #EE0000;
+    }
+}
+
+#toast {
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%, 0);
+    background-color: #FFF;
+    padding: var(--padding-s);
+    padding-right: var(--padding-l);
+    border-radius: 12px;
+    box-shadow: 0 0 40px #00000020;
+    display: flex;
+    align-items: center;
+    transform: translate(-50%, 100%);
+    z-index: 100;
+}
+
+.toast-icon {
+    display: flex;
+    margin-right: var(--margin-s);
+}
+
+.toast-icon svg {
+    width: var(--size-s);
+}
+
+.toast-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.toast-title {
+    font-weight: bold;
+    user-select: none !important;
+}
+
+.toast-content {
+    white-space: nowrap;
+    user-select: none !important;
+}
+
 .form.active {
     display: flex;
 }
 
 .form {
-    position: absolute;
+    position: fixed;
     inset: 0;
     display: none;
     align-items: center;
@@ -128,6 +214,7 @@ strong {
     background-color: #FFF;
     border-radius: 12px;
     max-width: 220px;
+    overflow: hidden;
 }
 
 .form p {
@@ -136,7 +223,7 @@ strong {
 
 .form hr {
     margin: 8px 0;
-    border: 1px solid #7A6BFF;
+    border-top: 1px solid #7A6BFF;
     opacity: .2;
 }
 
@@ -144,6 +231,13 @@ strong {
     display: flex;
     justify-content: space-between;
     margin-top: var(--margin-s);
+    margin-left: calc(var(--margin-s) * -1);
+    margin-right: calc(var(--margin-s) * -1);
+    margin-bottom: calc(var(--margin-s) * -1);
+}
+
+.form-wrapper div {
+    border-top: 1px solid #7a6bff33;
 }
 
 .form div>button {
@@ -151,25 +245,38 @@ strong {
     border: 0;
     outline: 0;
     padding: 6px 12px;
-    background-color: #7A6BFFb0;
-    border-radius: 6px;
-    color: #FFF;
+    background-color: transparent;
     cursor: pointer;
     user-select: none !important;
+    flex: 1;
+    position: relative;
+    transition: .15s;
 }
 
 .form div>button:hover {
-    background-color: #7A6BFFBA;
+    background-color: rgba(122, 107, 255, 0.05);
 }
 
 .form div>button:active {
-    background-color: #7A6BFFDA;
+    background-color: rgba(122, 107, 255, 0.1);
+}
+
+#btn-no::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    right: 0;
+    border: 1px solid rgba(122, 107, 255, 0.4);
+    transform: translateX(50%);
+    opacity: .2;
 }
 
 #btn-no {
-    flex: 1;
-    margin-right: var(--margin-s);
+    color: #7A6BFF;
 }
+
+#btn-yes {}
 
 .wrapper {
     display: flex;
@@ -192,6 +299,7 @@ strong {
     cursor: pointer;
     user-select: none !important;
     transition: color 0.15s;
+    transition: background 0.15s;
     margin-left: var(--margin-s);
     box-shadow: 0 0 10px #00000010;
 }
@@ -239,7 +347,7 @@ strong {
     box-shadow: 0 0 10px #00000010;
 }
 
-.list-question :last-child {
+.list-question >:last-child {
     margin: 0;
 }
 
@@ -284,6 +392,7 @@ strong {
 .question-body {
     display: flex;
     flex-direction: column;
+    margin-bottom: -18px;
 }
 
 .answer {
@@ -298,4 +407,7 @@ strong {
 
 .answer>img {
     width: 100%;
+}
+.question br{
+    height: 0;
 }

@@ -1,10 +1,13 @@
 * {
-    font-size: 16px;
+    font-size: 14px;
 }
 
 :root {
     --padding-s: 16px;
+    --padding-l: 24px;
     --margin-s: 16px;
+
+    --size-s: 36px;
 }
 
 body {
@@ -13,7 +16,7 @@ body {
 }
 
 .form-wrapper {
-    max-width: 400px;
+    max-width: 300px;
 }
 
 .question-image {
@@ -21,4 +24,7 @@ body {
 }
 .question-head{
     align-items: flex-start;
+}
+.question-body{
+    margin-bottom: -21px;
 }

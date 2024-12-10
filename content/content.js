@@ -55,11 +55,9 @@ function getQuestion(qi, q, img, ops) {
       return ops
         .map((ans, i) => {
           if (i === ci) {
-            return `<div class="answer choose"><p>*${lba[i] + " " + ans.innerText
-              }</p></div>`;
+            return `<div class="answer choose"><p>*${lba[i] + " " + ans.innerText}</p></div>`;
           }
-          return `<div class="answer">${lba[i] + " " + ans.innerText
-            }<p></p></div>`;
+          return `<div class="answer"><p>${lba[i] + " " + ans.innerText}</p></div>`;
         })
         .join("");
     }
@@ -72,6 +70,7 @@ function getQuestion(qi, q, img, ops) {
         </div>
         <div class="question-body">
             ${op()}
+            <br>
         </div>
     `;
     return html;
