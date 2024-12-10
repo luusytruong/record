@@ -191,7 +191,7 @@ strong {
     text-align: center;
     cursor: pointer;
     user-select: none !important;
-    transition: all .15s;
+    transition: color 0.15s;
     margin-left: var(--margin-s);
     box-shadow: 0 0 10px #00000010;
 }
@@ -201,13 +201,12 @@ strong {
 }
 
 .dangerous>*:hover {
-    background-color: #7A6BFFAA;
-    color: #FFF;
+    outline: 2px solid #c0b9ff;
 }
 
 .dangerous>*:active {
-    background-color: #7A6BFFCA;
-    color: #FFF;
+    background-color: #b3aaff;
+    color: #FFF !important;
 }
 
 .author {
@@ -215,11 +214,11 @@ strong {
 }
 
 #btn-expand {
-    color: #FFF;
+    color: #7A6BFF;
 }
 
 #btn-clear {
-    color: #FFF;
+    color: #EE0000;
     flex: 1;
 }
 
