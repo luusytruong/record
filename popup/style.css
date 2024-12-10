@@ -273,7 +273,7 @@ strong {
 }
 
 .question-content {
-    font-weight: 500;
+    font-weight: bold;
     margin-bottom: 8px;
 }
 
@@ -292,7 +292,8 @@ strong {
 }
 
 .answer.choose p {
-    font-weight: 500;
+    font-weight: bold;
+    color: #EE0000;
 }
 
 .answer>img {
