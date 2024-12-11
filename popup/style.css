@@ -121,6 +121,10 @@ strong {
     animation: toastHide .8s ease forwards;
 }
 
+#toast.warning.animate {
+    animation: toastHide .8s ease forwards;
+}
+
 #toast.successful {
     animation: toastShow .8s ease forwards;
 
@@ -137,16 +141,26 @@ strong {
     }
 }
 
+#toast.warning {
+    animation: toastShow .8s ease forwards;
+
+    svg {
+        fill: #FFA500;
+        margin-left: 12px;
+    }
+}
+
 #toast {
     position: fixed;
     left: 50%;
     bottom: 0;
+    width: 376px;
     transform: translate(-50%, 0);
     background-color: #FFF;
     padding: var(--padding-s);
     padding-right: var(--padding-l);
-    border-radius: 12px;
-    box-shadow: 0 0 40px #00000020;
+    border-radius: 20px;
+    box-shadow: 0 0 40px #0000000d;
     display: flex;
     align-items: center;
     transform: translate(-50%, 100%);
@@ -168,13 +182,14 @@ strong {
 }
 
 .toast-title {
-    font-weight: bold;
+    font-weight: 500;
     user-select: none !important;
 }
 
 .toast-content {
     white-space: nowrap;
     user-select: none !important;
+    font-size: 11px;
 }
 
 .form.active {
@@ -306,7 +321,7 @@ strong {
     transition: color 0.15s;
     transition: background 0.15s;
     margin-left: var(--margin-s);
-    box-shadow: 0 0 10px #00000010;
+    box-shadow: 0 0 10px #0000000d;
     color: #7A6BFF;
 }
 
@@ -324,8 +339,13 @@ strong {
 }
 
 #btn-clear {
-    color: #EE0000;
+    color: #FFF;
     flex: 1;
+    transition: color 0.15s;
+}
+
+#btn-clear:hover {
+    color: #7A6BFF;
 }
 
 .list-question {

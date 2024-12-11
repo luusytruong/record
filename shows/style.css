@@ -20,6 +20,10 @@ body {
     max-width: 270px;
 }
 
+.toast-content {
+    font-size: 13px;
+}
+
 .question-image {
     max-width: unset;
 }
