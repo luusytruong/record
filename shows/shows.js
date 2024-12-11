@@ -61,6 +61,14 @@ let bE = document.getElementById("btn-expand");
 bE.addEventListener("click", () => {
   chrome.runtime.openOptionsPage();
 });
+//
+let bF = document.getElementById("btn-filter");
+//
+bF.addEventListener("click", () => {
+  let url = "https://luusytruong.github.io/deduplicates/";
+  window.open(url, "_blank");
+});
+//
 function load() {
   let qC = document.getElementById("question-container");
   qC.innerText = "";
