@@ -55,9 +55,13 @@ function getQuestion(qi, q, img, ops) {
       return ops
         .map((ans, i) => {
           if (i === ci) {
-            return `<div class="answer choose"><p>*${lba[i] + " " + ans.innerText}</p></div>`;
+            return `<div class="answer choose"><p>*${
+              lba[i] + " " + ans.innerText
+            }</p></div>`;
           }
-          return `<div class="answer"><p>${lba[i] + " " + ans.innerText}</p></div>`;
+          return `<div class="answer"><p>${
+            lba[i] + " " + ans.innerText
+          }</p></div>`;
         })
         .join("");
     }
@@ -70,7 +74,6 @@ function getQuestion(qi, q, img, ops) {
         </div>
         <div class="question-body">
             ${op()}
-            <br>
         </div>
     `;
     return html;
@@ -139,13 +142,14 @@ function createBtnSave() {
       btnSave = document.createElement("button");
       btnSave.id = "syluu";
       btnSave.innerText = "Status";
-      btnSave.title = 'Load question index'
+      btnSave.title = "Load question index";
       let cssBtn = document.createElement("style");
       cssBtn.innerHTML = css;
       document.head.appendChild(cssBtn);
+      nav.appendChild(btnSave);
+      choose();
+      createSuccess = true;
     }
-    nav.appendChild(btnSave);
-    choose();
     btnSave.previousElementSibling.addEventListener("click", () => {
       setTimeout(() => {
         choose();
@@ -153,7 +157,7 @@ function createBtnSave() {
     });
     //
     btnSave.addEventListener("click", () => {
-      choose()
+      choose();
     });
   } catch (e) {
     alert("create btn function: " + e);
@@ -187,14 +191,31 @@ function loadToStorage() {
   }
 }
 //
-let intervalId = setInterval(() => {
-  let nav = document.querySelector(
-    ".ictu-page-test__test-panel__single-nav__navigation"
-  );
-  if (nav) {
-    console.clear();
-    createBtnSave();
-    clearInterval(intervalId);
+function interval() {
+  let interval = 1000;
+  function intervalCreateBtn() {
+    let intervalId = setInterval(() => {
+      let nav = document.querySelector(
+        ".ictu-page-test__test-panel__single-nav__navigation"
+      );
+      if (nav) {
+        console.clear();
+        createBtnSave();
+        clearInterval(intervalId);
+        intervalCheckUrl();
+      }
+    }, interval);
   }
-}, 1000);
+  function intervalCheckUrl() {
+    let intervalId = setInterval(() => {
+      if (window.location.href.includes("/auth/login")) {
+        intervalCreateBtn();
+        clearInterval(intervalId);
+      }
+    }, interval);
+  }
+  //
+  intervalCreateBtn();
+}
 //
+interval();

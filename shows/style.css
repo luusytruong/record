@@ -7,7 +7,8 @@
     --padding-l: 24px;
     --margin-s: 16px;
 
-    --size-s: 36px;
+    --size-s: 16px;
+    --size-xl: 36px;
 }
 
 body {
@@ -16,15 +17,13 @@ body {
 }
 
 .form-wrapper {
-    max-width: 300px;
+    max-width: 270px;
 }
 
 .question-image {
     max-width: unset;
 }
-.question-head{
+
+.question-head {
     align-items: flex-start;
-}
-.question-body{
-    margin-bottom: -21px;
 }

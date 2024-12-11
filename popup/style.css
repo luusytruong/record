@@ -8,6 +8,7 @@
     line-height: 1.5;
     font-family: 'Inter';
     font-size: 12px;
+    font-weight: normal;
     text-decoration: none;
     user-select: text !important;
     -moz-user-select: text !important;
@@ -21,7 +22,8 @@
     --margin-s: 12px;
     --margin-m: 16px;
     --margin-l: 20px;
-    --size-s: 28px;
+    --size-s: 14px;
+    --size-xl: 28px;
 }
 
 ::selection {
@@ -38,14 +40,13 @@ body {
     margin: auto;
 }
 
+strong {
+    font-weight: 500;
+}
+
 ::-webkit-scrollbar {
     -webkit-appearance: none;
     width: 0;
-}
-
-strong {
-    font-weight: 500;
-    color: #7A6BFF;
 }
 
 @keyframes opIn {
@@ -158,7 +159,7 @@ strong {
 }
 
 .toast-icon svg {
-    width: var(--size-s);
+    width: var(--size-xl);
 }
 
 .toast-body {
@@ -219,6 +220,13 @@ strong {
 
 .form p {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.form p>strong {
+    font-size: var(--size-s);
+    margin-bottom: calc(var(--margin-s) / 2);
 }
 
 .form hr {
@@ -241,6 +249,7 @@ strong {
 }
 
 .form div>button {
+    font-size: var(--size-s);
     background-color: transparent;
     border: 0;
     outline: 0;
@@ -249,34 +258,30 @@ strong {
     cursor: pointer;
     user-select: none !important;
     flex: 1;
-    position: relative;
     transition: .15s;
-}
-
-.form div>button:hover {
-    background-color: rgba(122, 107, 255, 0.05);
-}
-
-.form div>button:active {
-    background-color: rgba(122, 107, 255, 0.1);
-}
-
-#btn-no::after {
-    content: '';
-    position: absolute;
-    top: 4px;
-    bottom: 4px;
-    right: 0;
-    border: 1px solid rgba(122, 107, 255, 0.4);
-    transform: translateX(50%);
-    opacity: .2;
-}
-
-#btn-no {
     color: #7A6BFF;
 }
 
-#btn-yes {}
+.form-wrapper>div>:last-child {
+    border: 0 !important;
+}
+
+.form div>button:hover {
+    background-color: #7a6bff0d;
+}
+
+.form div>button:active {
+    background-color: #7a6bff1a;
+}
+
+#btn-no {
+    border-right: 1px solid #7A6BFF33;
+}
+
+#btn-yes {
+    border-right: 1px solid #7A6BFF33;
+    font-weight: 600;
+}
 
 .wrapper {
     display: flex;
@@ -347,7 +352,7 @@ strong {
     box-shadow: 0 0 10px #00000010;
 }
 
-.list-question >:last-child {
+.list-question>:last-child {
     margin: 0;
 }
 
@@ -392,7 +397,7 @@ strong {
 .question-body {
     display: flex;
     flex-direction: column;
-    margin-bottom: -18px;
+    line-height: 0;
 }
 
 .answer {
@@ -407,7 +412,4 @@ strong {
 
 .answer>img {
     width: 100%;
-}
-.question br{
-    height: 0;
 }
