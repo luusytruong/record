@@ -307,6 +307,7 @@ strong {
     transition: background 0.15s;
     margin-left: var(--margin-s);
     box-shadow: 0 0 10px #00000010;
+    color: #7A6BFF;
 }
 
 .dangerous :first-child {
@@ -320,14 +321,6 @@ strong {
 .dangerous>*:active {
     background-color: #b3aaff;
     color: #FFF !important;
-}
-
-.author {
-    color: #7A6BFF;
-}
-
-#btn-expand {
-    color: #7A6BFF;
 }
 
 #btn-clear {
