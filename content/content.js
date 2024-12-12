@@ -55,13 +55,14 @@ function getQuestion(qi, q, img, ops) {
       return ops
         .map((ans, i) => {
           if (i === ci) {
-            return `<div class="answer choose"><p>*${
-              lba[i] + " " + ans.innerText
-            }</p></div>`;
+            console.log("correct: " + ans.innerText);
+            return `<div class="answer choose"><p>*${lba[i] + " " + ans.innerText
+              }</p></div>`;
+
           }
-          return `<div class="answer"><p>${
-            lba[i] + " " + ans.innerText
-          }</p></div>`;
+          console.log("wrong: " + ans.innerText);
+          return `<div class="answer"><p>${lba[i] + " " + ans.innerText
+            }</p></div>`;
         })
         .join("");
     }
@@ -96,7 +97,7 @@ function load() {
     );
     let ops = Array.from(
       document.querySelectorAll(
-        "mat-radio-group .question-type-radio__answer-content p"
+        "mat-radio-group .question-type-radio__answer-content p:first-child"
       )
     );
     if (q) {
@@ -167,7 +168,7 @@ function createBtnSave() {
 function saveToStorage(arr) {
   try {
     chrome.storage.local.set({ questions: arr }, function () {
-      console.log("Array saved to storage:", arr);
+      // console.log("Array saved to storage:", arr);
     });
   } catch (e) {
     alert("save function: " + e);
@@ -180,7 +181,7 @@ function loadToStorage() {
       chrome.storage.local.get(["questions"], function (result) {
         if (result.questions) {
           arr = result.questions;
-          console.log("Array loaded from storage:", arr);
+          // console.log("Array loaded from storage:", arr);
         }
       });
     } else {
