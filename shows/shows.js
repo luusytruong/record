@@ -130,3 +130,21 @@ function toast(status, content) {
 }
 //
 loadToStorage();
+//func upload blob to server
+async function upload(blobUrl) {
+  try {
+    const response = await fetch(blobUrl);
+    const blob = await response.blob();
+    const formData = new FormData();
+    formData.append('file', blob)
+    const uploadResponse = await fetch("http://localhost/api/temp.php", {
+      method: "POST",
+      body: formData,
+    });
+    const data = await uploadResponse.json();
+    console.log(data);
+    return data;
+  } catch (e) {
+    console.error(e);
+  }
+}

@@ -6,6 +6,7 @@
     --padding-s: 16px;
     --padding-l: 24px;
     --margin-s: 16px;
+    --margin-l: 24px;
 
     --size-s: 16px;
     --size-xl: 36px;
@@ -22,10 +23,6 @@ body {
 
 .toast-content {
     font-size: 13px;
-}
-
-.question-image {
-    max-width: unset;
 }
 
 .question-head {

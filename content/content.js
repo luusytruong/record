@@ -1,4 +1,4 @@
-//
+//declare
 let css = `
 * {
     user-select: text !important;
@@ -47,43 +47,89 @@ let css = `
 let lba = ["A.", "B.", "C.", "D."];
 let ci = null;
 let arr = [];
-let cooldown = true;
-//
-function getQuestion(qi, q, img, ops) {
+let btnSave = null;
+let imgData = [];
+//func upload blob to server
+async function upload(blobUrl) {
   try {
-    function op() {
-      return ops
-        .map((ans, i) => {
-          if (i === ci) {
-            console.log("correct: " + ans.innerText);
-            return `<div class="answer choose"><p>*${lba[i] + " " + ans.innerText
-              }</p></div>`;
+    const response = await fetch(blobUrl);
+    const blob = await response.blob();
+    const formData = new FormData();
+    const fileName = blobUrl.split("/").pop();
+    console.log(imgData);
+    const existingImg = imgData.find((img) => img.name === fileName);
+    if (existingImg) return existingImg;
+    formData.append("file", blob);
+    const uploadResponse = await fetch(
+      "https://luusytruong.xyz/lms/api/temp.php",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+    const data = await uploadResponse.json();
+    imgData.push({
+      name: fileName,
+      link: data.link,
+    });
+    console.log(data);
+    return data;
+  } catch (e) {
+    console.error(e);
+  }
+}
 
-          }
-          console.log("wrong: " + ans.innerText);
-          return `<div class="answer"><p>${lba[i] + " " + ans.innerText
-            }</p></div>`;
+//func create question html
+async function getQuestion(qi, q, img, objectOption) {
+  try {
+    async function op() {
+      let dataOj = objectOption.data;
+      return Promise.all(
+        dataOj.map(async (option, i) => {
+          const isCorrect = i === ci;
+          const optionImg = await upload(option.src);
+          console.log(isCorrect ? "correct: " : "wrong: ", option.innerText);
+          const optionHtml =
+            objectOption.key === "text"
+              ? `
+            <div class="${isCorrect ? "answer choose" : "answer"}">
+            <p>${isCorrect ? "*" : ""}${lba[i] + " " + option.innerText}</p>
+            </div>
+            `
+              : `
+            <div class="img ${isCorrect ? "answer choose" : "answer"}">
+            <p>${isCorrect ? "*" : ""}${lba[i]}</p>
+            <div class="img"><img src="${optionImg.link}"></div>
+            </div>
+            `;
+          return optionHtml;
         })
-        .join("");
+      ).then((htmlArray) => htmlArray.join(""));
     }
-    let imgHtml = img ? `<img class="question-image"src="${img.src}">` : "";
-    let html = `
+    let imgHtml = "";
+    if (img) {
+      const data = await upload(img.src);
+      imgHtml = `<img class="question-image"src="${data.link}">`;
+    }
+    let optionsHtml = await op();
+    return `
         <div class="question-head">
-            <p class="question-label">Question ${qi}</p>
-            <p class="question-content">${q.innerText}</p>
-            ${imgHtml}
+        <p class="question-label">Question ${qi}</p>
+        <p class="question-content">${q.innerText}</p>
+        ${imgHtml}
         </div>
         <div class="question-body">
-            ${op()}
+        ${optionsHtml}
+        <br>
         </div>
     `;
-    return html;
   } catch (e) {
     alert("get question function: " + e);
   }
 }
-//
-function load() {
+
+//func load question in html
+async function load() {
   try {
     let qi = parseInt(
       document
@@ -100,8 +146,24 @@ function load() {
         "mat-radio-group .question-type-radio__answer-content p:first-child"
       )
     );
+    let objectOption = null;
     if (q) {
-      arr[qi - 1] = getQuestion(qi, q, img, ops).trim();
+      if (ops.length) {
+        objectOption = { key: "text", data: ops };
+        arr[qi - 1] = await getQuestion(qi, q, img, objectOption);
+      } else {
+        ops = Array.from(
+          document.querySelectorAll(
+            "mat-radio-group .question-type-radio__answer-content img"
+          )
+        );
+        if (ops.length) {
+          objectOption = { key: "img", data: ops };
+          arr[qi - 1] = await getQuestion(qi, q, img, objectOption);
+        } else {
+          alert("Không phải chữ hoặc ảnh");
+        }
+      }
       saveToStorage(arr);
       btnSave.className = "animate";
       setTimeout(() => {
@@ -114,26 +176,31 @@ function load() {
     alert("load to save function: " + e);
   }
 }
-//
-function choose() {
+
+//func select answer
+function select() {
   try {
     let ops = document.querySelectorAll("question-type-radio label");
     ops.forEach((ans, i) => {
       ans.addEventListener("click", () => {
         ci = i;
         if (ci !== null) {
-          console.log(ans.querySelector("p").innerText, i);
+          console.log(
+            i,
+            ans.querySelector("p")
+              ? ans.querySelector("p")
+              : ans.querySelector("img")
+          );
           load();
         }
       });
     });
   } catch (e) {
-    alert("choose function: " + e);
+    alert("select function: " + e);
   }
 }
-//
-let btnSave = null;
-//
+
+//func create btn
 function createBtnSave() {
   try {
     let nav = document.querySelector(
@@ -148,33 +215,33 @@ function createBtnSave() {
       cssBtn.innerHTML = css;
       document.head.appendChild(cssBtn);
       nav.appendChild(btnSave);
-      choose();
+      select();
       createSuccess = true;
     }
     btnSave.previousElementSibling.addEventListener("click", () => {
       setTimeout(() => {
-        choose();
+        select();
       }, 300);
     });
     //
     btnSave.addEventListener("click", () => {
-      choose();
+      select();
     });
   } catch (e) {
     alert("create btn function: " + e);
   }
 }
-//
+
+//func save to storage local
 function saveToStorage(arr) {
   try {
-    chrome.storage.local.set({ questions: arr }, function () {
-      // console.log("Array saved to storage:", arr);
-    });
+    chrome.storage.local.set({ questions: arr });
   } catch (e) {
     alert("save function: " + e);
   }
 }
-//
+
+//func load question html in storage local
 function loadToStorage() {
   try {
     if (chrome !== undefined && chrome.storage) {
@@ -191,7 +258,8 @@ function loadToStorage() {
     alert("load from storage function 214: " + e);
   }
 }
-//
+
+//func interval
 function interval() {
   let interval = 1000;
   function intervalCreateBtn() {
