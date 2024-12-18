@@ -263,28 +263,35 @@ function loadToStorage() {
 function interval() {
   let interval = 1000;
   function intervalCreateBtn() {
+    console.log("active interval create btn");
     let intervalId = setInterval(() => {
       let nav = document.querySelector(
         ".ictu-page-test__test-panel__single-nav__navigation"
       );
       if (nav) {
-        console.clear();
         createBtnSave();
         clearInterval(intervalId);
-        intervalCheckUrl();
+        intervalCheckBtnDo();
+        console.log("create btn successful");
       }
     }, interval);
   }
-  function intervalCheckUrl() {
+  function intervalCheckBtnDo() {
+    console.clear();
+    console.log("active interval find btn");
     let intervalId = setInterval(() => {
-      if (window.location.href.includes("/auth/login")) {
-        intervalCreateBtn();
+      let btn = document.querySelector(".tbl-testing-result td>div>button");
+      if (btn) {
+        btn.addEventListener("click", () => {
+          intervalCreateBtn();
+        });
         clearInterval(intervalId);
+        console.log("find btn do");
       }
     }, interval);
   }
   //
-  intervalCreateBtn();
+  intervalCheckBtnDo();
 }
 //
 interval();
