@@ -136,7 +136,7 @@ async function upload(blobUrl) {
     const response = await fetch(blobUrl);
     const blob = await response.blob();
     const formData = new FormData();
-    formData.append('file', blob)
+    formData.append("file", blob);
     const uploadResponse = await fetch("http://localhost/api/temp.php", {
       method: "POST",
       body: formData,

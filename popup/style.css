@@ -405,6 +405,7 @@ strong {
 
 .question-image {
     max-width: 100%;
+    width: fit-content;
     border: 1px solid #eee;
     border-radius: 8px;
 }
@@ -429,25 +430,21 @@ strong {
 
 .img.answer {
     flex-direction: row;
-    border: 1px solid #eee;
-    padding: 4px;
+    padding: 8px;
     border-radius: 6px;
-    flex: 1 1 calc(100% / 2 - (var(--margin-s) / 2));
-    margin: 0 var(--margin-s) var(--margin-s) 0;
+    flex: 1;
+    max-width: calc(100% / 4 - (var(--margin-s) / 2));
+    margin-right: var(--margin-s);
     position: relative;
+    border: 1px solid #eee;
+}
+
+.question-body>:nth-last-child(2) {
+    margin: 0;
 }
 
 .img.answer.choose {
     border: 1px solid #00BB00;
-}
-
-.img.answer:nth-child(2n) {
-    margin: 0 0 var(--margin-s) 0;
-}
-
-.img.answer:nth-child(3),
-.img.answer:nth-child(4) {
-    margin-bottom: 0;
 }
 
 .img>div {
@@ -460,4 +457,5 @@ strong {
     width: 100%;
     aspect-ratio: 5/2;
     border-radius: 4px;
+    object-fit: cover;
 }

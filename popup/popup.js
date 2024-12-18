@@ -100,7 +100,7 @@ function toast(status, content) {
       if (option === "call") {
         timeoutId = setTimeout(() => {
           toastElem.className = `${status.toLowerCase()} animate`;
-        }, 4000);
+        }, 1300);
       } else {
         clearTimeout(timeoutId);
       }

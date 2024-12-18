@@ -5,61 +5,86 @@ let css = `
     -moz-user-select: text !important;
     -webkit-user-select: text !important;
 }
+body > p {
+    display:none !important;
+}
 ::selection {
+    background-color: #1D4ED8;
+    background-color: #2563EB;
+    background-color: #3B82F6;
     background-color: #7A6BFF;
     color: #F5F5F5;
 }
 @keyframes animate {
     0% {
-        background-color: #00EE00;
+        background-color: #7A6BFF;
+        box-shadow: 0 0 3px 2px #7A6BFF;
     }
     40% {
-        background-color: #3B82F6;
+        background-color: #05c30c;
+        box-shadow: 0 0 3px 2px #05c30c;
     }
     60% {
-        background-color: #00EE00;
+        background-color: #7A6BFF;
+        box-shadow: 0 0 3px 2px #7A6BFF;
     }
     100% {
-        background-color: #3B82F6;
+        background-color: #05c30c;
+        box-shadow: 0 0 3px 2px #05c30c;
     }
 }
-#syluu.animate {
-    animation: animate 0.35s ease;
+.animate {
+    animation: animate 0.4s ease forwards !important;
 }
-#syluu {
-    background-color: #3B82F6;
-    color: #FFF;
-    padding: 0 15px;
-    height: 40px;
-    border-radius: 50px;
-    border: 0;
-    transition: 0.2s;
-    margin: 5px;
-    user-select: none !important;
+.ictu-page-test__test-panel__user-info>div>div:first-child {
+    padding: 1px;
+    border-radius: 50%;
 }
-#syluu:hover {
-    background-color: #2563EB !important
-}
-#syluu:active {
-    background-color: #1D4ED8 !important
+.app-version__connect-status{
+    cursor: pointer;
 }
 `;
 let lba = ["A.", "B.", "C.", "D."];
 let ci = null;
+let cis = [];
 let arr = [];
-let btnSave = null;
+let nav = null;
+let parentAvt = null;
+let btnStatus = null;
 let imgData = [];
+
+//func append css
+function appendCSS(style) {
+  let css = document.createElement("style");
+  css.innerHTML = style;
+  css.id = "syluu-style";
+  document.head.appendChild(css);
+}
+
+//function animation
+function animate(elem) {
+  elem.classList.add("animate");
+  setTimeout(() => {
+    elem.classList.remove("animate");
+  }, 400);
+}
+
 //func upload blob to server
 async function upload(blobUrl) {
   try {
-    const response = await fetch(blobUrl);
-    const blob = await response.blob();
-    const formData = new FormData();
     const fileName = blobUrl.split("/").pop();
-    console.log(imgData);
     const existingImg = imgData.find((img) => img.name === fileName);
     if (existingImg) return existingImg;
+
+    const response = await fetch(blobUrl);
+    if (!response.ok) {
+      throw new Error("error fetch blob url");
+    }
+    const blob = await response.blob();
+    const formData = new FormData();
+    console.log(imgData);
     formData.append("file", blob);
+
     const uploadResponse = await fetch(
       "https://luusytruong.xyz/lms/api/temp.php",
       {
@@ -67,6 +92,9 @@ async function upload(blobUrl) {
         body: formData,
       }
     );
+    if (!uploadResponse.ok) {
+      throw new Error("error fetch server");
+    }
     const data = await uploadResponse.json();
     imgData.push({
       name: fileName,
@@ -75,7 +103,10 @@ async function upload(blobUrl) {
     console.log(data);
     return data;
   } catch (e) {
-    console.error(e);
+    console.log("upload function: " + e);
+    return {
+      link: "../images/error_img.png",
+    };
   }
 }
 
@@ -86,14 +117,32 @@ async function getQuestion(qi, q, img, objectOption) {
       let dataOj = objectOption.data;
       return Promise.all(
         dataOj.map(async (option, i) => {
-          const isCorrect = i === ci;
-          const optionImg = await upload(option.src);
-          console.log(isCorrect ? "correct: " : "wrong: ", option.innerText);
+          let isCorrect = null;
+          if (ci !== null) {
+            isCorrect = i === ci;
+          } else {
+            isCorrect = cis.includes(i);
+          }
+          let optionImg;
+          if (objectOption.key !== "text") {
+            optionImg = await upload(option.src);
+          }
+          console.log(
+            "%c" + (isCorrect ? "correct: " : "wrong: "),
+            `color: ${isCorrect ? "#00FF00" : "#FF0000"}; font-weight: bold;`,
+            option.innerText
+          );
           const optionHtml =
             objectOption.key === "text"
               ? `
             <div class="${isCorrect ? "answer choose" : "answer"}">
-            <p>${isCorrect ? "*" : ""}${lba[i] + " " + option.innerText}</p>
+            <p>${isCorrect ? "*" : ""}${
+                  lba[i] +
+                  " " +
+                  option.innerText
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                }</p>
             </div>
             `
               : `
@@ -137,13 +186,13 @@ async function load() {
         .innerText.replaceAll("Câu ", "")
         .replaceAll(":", "")
     );
-    let q = document.querySelector(".present-single-question__direction p");
+    let q = document.querySelector(".present-single-question__head p");
     let img = document.querySelector(
-      ".present-single-question__direction p + figure img"
+      ".present-single-question__head p + figure img"
     );
     let ops = Array.from(
       document.querySelectorAll(
-        "mat-radio-group .question-type-radio__answer-content p:first-child"
+        ".present-single-question__body label>div p:first-child"
       )
     );
     let objectOption = null;
@@ -165,10 +214,7 @@ async function load() {
         }
       }
       saveToStorage(arr);
-      btnSave.className = "animate";
-      setTimeout(() => {
-        btnSave.className = "";
-      }, 400);
+      animate(btnStatus);
     } else {
       alert("câu này bị lỗi, dùng CTRL + S để lưu lại rồi gửi cho tao");
     }
@@ -180,20 +226,38 @@ async function load() {
 //func select answer
 function select() {
   try {
-    let ops = document.querySelectorAll("question-type-radio label");
+    ci = null;
+    cis = [];
+    let ops = document.querySelectorAll(".present-single-question__body label");
+    let checkElems = document.querySelectorAll(
+      '.present-single-question__body input[type="checkbox"]'
+    );
     ops.forEach((ans, i) => {
-      ans.addEventListener("click", () => {
-        ci = i;
-        if (ci !== null) {
-          console.log(
-            i,
-            ans.querySelector("p")
-              ? ans.querySelector("p")
-              : ans.querySelector("img")
-          );
+      if (checkElems[i]) {
+        checkElems[i].addEventListener("change", function () {
+          if (this.checked) {
+            if (!cis.includes(i)) {
+              cis.push(i);
+            }
+          } else {
+            cis = cis.filter((index) => index !== i);
+          }
           load();
-        }
-      });
+        });
+      } else {
+        ans.addEventListener("click", () => {
+          ci = i;
+          if (ci !== null) {
+            console.log(
+              i,
+              ans.querySelector("p")
+                ? ans.querySelector("p")
+                : ans.querySelector("img")
+            );
+            load();
+          }
+        });
+      }
     });
   } catch (e) {
     alert("select function: " + e);
@@ -201,34 +265,28 @@ function select() {
 }
 
 //func create btn
-function createBtnSave() {
+function addEventBtnStatus() {
   try {
-    let nav = document.querySelector(
-      ".ictu-page-test__test-panel__single-nav__navigation"
+    parentAvt = document.querySelector(
+      ".ictu-page-test__test-panel__user-info>div>div:first-child"
     );
-    if (nav && !document.getElementById("syluu")) {
-      btnSave = document.createElement("button");
-      btnSave.id = "syluu";
-      btnSave.innerText = "Status";
-      btnSave.title = "Load question index";
-      let cssBtn = document.createElement("style");
-      cssBtn.innerHTML = css;
-      document.head.appendChild(cssBtn);
-      nav.appendChild(btnSave);
+    btnStatus = document.querySelector(".app-version__connect-status");
+    //call
+    animate(btnStatus);
+    //call
+    select();
+    //listener e click btn
+    btnStatus.addEventListener("click", () => {
       select();
-      createSuccess = true;
-    }
-    btnSave.previousElementSibling.addEventListener("click", () => {
+    });
+    //listener e click btn
+    nav.querySelector("button").addEventListener("click", () => {
       setTimeout(() => {
         select();
       }, 300);
     });
-    //
-    btnSave.addEventListener("click", () => {
-      select();
-    });
   } catch (e) {
-    alert("create btn function: " + e);
+    alert("add event btn status function: " + e);
   }
 }
 
@@ -262,14 +320,15 @@ function loadToStorage() {
 //func interval
 function interval() {
   let interval = 1000;
-  function intervalCreateBtn() {
+  function intervalAddEvent() {
     console.log("active interval create btn");
     let intervalId = setInterval(() => {
-      let nav = document.querySelector(
+      nav = document.querySelector(
         ".ictu-page-test__test-panel__single-nav__navigation"
       );
       if (nav) {
-        createBtnSave();
+        //call
+        addEventBtnStatus();
         clearInterval(intervalId);
         intervalCheckBtnDo();
         console.log("create btn successful");
@@ -283,15 +342,18 @@ function interval() {
       let btn = document.querySelector(".tbl-testing-result td>div>button");
       if (btn) {
         btn.addEventListener("click", () => {
-          intervalCreateBtn();
+          intervalAddEvent();
         });
         clearInterval(intervalId);
         console.log("find btn do");
       }
     }, interval);
   }
-  //
+  //call
   intervalCheckBtnDo();
+  intervalAddEvent();
 }
-//
+
+//start
+appendCSS(css);
 interval();
