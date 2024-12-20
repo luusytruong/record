@@ -25,8 +25,7 @@
         {
             "matches": [
                 "https://lms.ictu.edu.vn/*",
-                "http://lms.ictu.edu.vn/*",
-                "<all_urls>"
+                "http://lms.ictu.edu.vn/*"
             ],
             "js": [
                 "content/content.js"
