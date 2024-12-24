@@ -12,36 +12,39 @@ body > p {
     background-color: #1D4ED8;
     background-color: #2563EB;
     background-color: #3B82F6;
+    background-color: #FF4500;
+    background-color: #05C30C;
     background-color: #7A6BFF;
     color: #F5F5F5;
 }
 @keyframes animate {
     0% {
-        background-color: #7A6BFF;
-        box-shadow: 0 0 3px 2px #7A6BFF;
+        background-color: #3B82F6;
+        box-shadow: 0 0 3px 2px #3B82F6;
     }
     40% {
-        background-color: #05c30c;
-        box-shadow: 0 0 3px 2px #05c30c;
+        background-color: #05C30C;
+        box-shadow: 0 0 3px 2px #05C30C;
     }
     60% {
-        background-color: #7A6BFF;
-        box-shadow: 0 0 3px 2px #7A6BFF;
+        background-color: #3B82F6;
+        box-shadow: 0 0 3px 2px #3B82F6;
     }
     100% {
-        background-color: #05c30c;
-        box-shadow: 0 0 3px 2px #05c30c;
+        background-color: #05C30C;
+        box-shadow: 0 0 3px 2px #05C30C;
     }
 }
 .animate {
-    animation: animate 0.4s ease forwards !important;
+    animation: animate 0.4s ease !important;
 }
 .ictu-page-test__test-panel__user-info>div>div:first-child {
     padding: 1px;
     border-radius: 50%;
 }
-.app-version__connect-status{
+.app-version{
     cursor: pointer;
+    user-select: none !important;
 }
 `;
 let lba = ["A.", "B.", "C.", "D."];
@@ -51,8 +54,26 @@ let arr = [];
 let nav = null;
 let parentAvt = null;
 let btnStatus = null;
+let labelStatus = null;
 let imgData = [];
-
+const styleW = `
+  color: #FCD53F; 
+  background-color: #464185; 
+  padding: 4px 12px 4px 4px; 
+  border-radius: 50px;
+`;
+const styleS = `
+  color: #00D26A; 
+  background-color: #464185; 
+  padding: 4px 12px 4px 4px; 
+  border-radius: 50px;
+`;
+const styleE = `
+  color: #F8312F; 
+  background-color: #464185; 
+  padding: 4px 12px 4px 4px; 
+  border-radius: 50px;
+`;
 //func append css
 function appendCSS(style) {
   let css = document.createElement("style");
@@ -226,39 +247,42 @@ async function load() {
 //func select answer
 function select() {
   try {
+    console.log("%c🔴 debug select", styleE);
     ci = null;
     cis = [];
     let ops = document.querySelectorAll(".present-single-question__body label");
-    let checkElems = document.querySelectorAll(
-      '.present-single-question__body input[type="checkbox"]'
-    );
-    ops.forEach((ans, i) => {
-      if (checkElems[i]) {
-        checkElems[i].addEventListener("change", function () {
-          if (this.checked) {
-            if (!cis.includes(i)) {
-              cis.push(i);
+    if (ops.length >= 0) {
+      let checkElems = document.querySelectorAll(
+        '.present-single-question__body input[type="checkbox"]'
+      );
+      ops.forEach((ans, i) => {
+        if (checkElems[i]) {
+          checkElems[i].addEventListener("change", function () {
+            if (this.checked) {
+              if (!cis.includes(i)) {
+                cis.push(i);
+              }
+            } else {
+              cis = cis.filter((index) => index !== i);
             }
-          } else {
-            cis = cis.filter((index) => index !== i);
-          }
-          load();
-        });
-      } else {
-        ans.addEventListener("click", () => {
-          ci = i;
-          if (ci !== null) {
-            console.log(
-              i,
-              ans.querySelector("p")
-                ? ans.querySelector("p")
-                : ans.querySelector("img")
-            );
             load();
-          }
-        });
-      }
-    });
+          });
+        } else {
+          ans.addEventListener("click", () => {
+            ci = i;
+            if (ci !== null) {
+              console.log(
+                i,
+                ans.querySelector("p")
+                  ? ans.querySelector("p")
+                  : ans.querySelector("img")
+              );
+              load();
+            }
+          });
+        }
+      });
+    }
   } catch (e) {
     alert("select function: " + e);
   }
@@ -271,19 +295,20 @@ function addEventBtnStatus() {
       ".ictu-page-test__test-panel__user-info>div>div:first-child"
     );
     btnStatus = document.querySelector(".app-version__connect-status");
+    labelStatus = document.querySelector(".app-version");
     //call
     animate(btnStatus);
     //call
     select();
     //listener e click btn
-    btnStatus.addEventListener("click", () => {
+    labelStatus.addEventListener("click", () => {
       select();
     });
     //listener e click btn
     nav.querySelector("button").addEventListener("click", () => {
       setTimeout(() => {
         select();
-      }, 300);
+      }, 100);
     });
   } catch (e) {
     alert("add event btn status function: " + e);
@@ -320,38 +345,33 @@ function loadToStorage() {
 //func interval
 function interval() {
   let interval = 1000;
-  function intervalAddEvent() {
-    console.log("active interval create btn");
+  console.clear();
+  function intervalBtnNext() {
+    console.log("%c🟡 wait add event btn ...", styleW);
     let intervalId = setInterval(() => {
-      nav = document.querySelector(
-        ".ictu-page-test__test-panel__single-nav__navigation"
-      );
+      nav = document.querySelector(".ictu-page-test__test-panel__single-nav");
       if (nav) {
+        console.log("%c🟢 add event btn styleSful", styleS);
         //call
         addEventBtnStatus();
+        intervalEventA();
         clearInterval(intervalId);
-        intervalCheckBtnDo();
-        console.log("create btn successful");
       }
     }, interval);
   }
-  function intervalCheckBtnDo() {
-    console.clear();
-    console.log("active interval find btn");
+  function intervalEventA() {
+    console.log("%c🟡 wait add event logo ...", styleW);
     let intervalId = setInterval(() => {
-      let btn = document.querySelector(".tbl-testing-result td>div>button");
-      if (btn) {
-        btn.addEventListener("click", () => {
-          intervalAddEvent();
-        });
+      let a = document.querySelector(".m-header a");
+      if (a) {
+        console.log("%c🟢 add event logo styleSful", styleS);
+        //call
+        intervalBtnNext();
         clearInterval(intervalId);
-        console.log("find btn do");
       }
     }, interval);
   }
-  //call
-  intervalCheckBtnDo();
-  intervalAddEvent();
+  intervalEventA();
 }
 
 //start
