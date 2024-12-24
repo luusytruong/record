@@ -5,6 +5,10 @@
     <meta name="google" content="notranslate" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css"
+    />
     <title>Popup</title>
   </head>
 
@@ -36,6 +40,42 @@
         </div>
       </div>
     </div>
+    <div id="setting">
+      <div class="setting-wrapper">
+        <div class="setting-title">Setting Extension</div>
+        <div class="options">
+          <label class="option" title="Default on">
+            <span>Toggle</span>
+            <div class="option-check">
+              <input type="checkbox" id="toggle" checked disabled />
+              <span class="option-slider"></span>
+              <span class="option-background"></span>
+            </div>
+          </label>
+          <label class="option" title="High light text">
+            <span>High light</span>
+            <div class="option-check">
+              <input type="checkbox" id="high-light" />
+              <span class="option-slider"></span>
+              <span class="option-background"></span>
+            </div>
+          </label>
+        </div>
+        <div id="btn-cancel">Cancel</div>
+      </div>
+    </div>
+    <div id="upload">
+      <div class="upload-wrapper">
+        <div class="upload-area">
+          <div class="upload-title">Upload Json</div>
+          <textarea id="upload-text"></textarea>
+        </div>
+        <div class="action-area">
+          <div id="btn-cancel-u">Cancel</div>
+          <div id="btn-send">Upload</div>
+        </div>
+      </div>
+    </div>
     <div class="wrapper">
       <div class="dangerous">
         <a
@@ -44,8 +84,19 @@
           target="_blank"
           >@syluu</a
         >
-        <div id="btn-expand">Expand</div>
-        <div id="btn-clear">Clear</div>
+        <div id="btn-upload" class="btn" title="Upload">
+          <img src="../images/upload-solid.svg" alt="s" />
+        </div>
+        <div id="btn-setting" class="btn" title="Setting">
+          <img src="../images/gear-solid.svg" alt="s" />
+        </div>
+        <div id="btn-expand" class="btn" title="Expand">
+          <img src="../images/expand-solid.svg" alt="e" />
+        </div>
+        <div id="btn-filter" class="btn" title="Filter">
+          <img src="../images/filter-solid.svg" alt="f" />
+        </div>
+        <div id="btn-clear" title="Clear">Clear</div>
       </div>
       <div class="list-question" id="question-container">
         <!-- question -->

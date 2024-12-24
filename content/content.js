@@ -38,6 +38,10 @@ body > p {
 .animate {
     animation: animate 0.4s ease !important;
 }
+.highlight {
+    font-weight: 400 !important;
+    background-color: transparent !important;
+}
 .ictu-page-test__test-panel__user-info>div>div:first-child {
     padding: 1px;
     border-radius: 50%;
@@ -74,6 +78,7 @@ const styleE = `
   padding: 4px 12px 4px 4px; 
   border-radius: 50px;
 `;
+
 //func append css
 function appendCSS(style) {
   let css = document.createElement("style");
@@ -234,7 +239,7 @@ async function load() {
           alert("Không phải chữ hoặc ảnh");
         }
       }
-      saveToStorage(arr);
+      saveToStorage("questions", arr);
       animate(btnStatus);
     } else {
       alert("câu này bị lỗi, dùng CTRL + S để lưu lại rồi gửi cho tao");
@@ -245,17 +250,43 @@ async function load() {
 }
 
 //func select answer
-function select() {
+let dataJson = null;
+async function select() {
   try {
     console.log("%c🔴 debug select", styleE);
     ci = null;
     cis = [];
+    let correctA = null;
+    let q = document.querySelector(".present-single-question__head p");
+    console.log(q.innerText.trim());
+    if (q) {
+      dataJson = await getFromStorage("json");
+      if (dataJson != null) {
+        dataJson = JSON.parse(dataJson);
+        console.log(dataJson);
+        dataJson.forEach((question) => {
+          if (q.innerText.trim() === question.content) {
+            correctA = question.correctAnswer;
+          }
+        });
+      } else {
+        console.log("json rong");
+      }
+    }
     let ops = document.querySelectorAll(".present-single-question__body label");
     if (ops.length >= 0) {
       let checkElems = document.querySelectorAll(
         '.present-single-question__body input[type="checkbox"]'
       );
-      ops.forEach((ans, i) => {
+      ops.forEach(async (ans, i) => {
+        //check correct
+        if (correctA != null) {
+          let answer = ans.querySelector("p");
+          if (answer && answer.innerText.trim() === correctA) {
+            answer.classList.add("highlight");
+            answer.innerText += ".";
+          }
+        } //
         if (checkElems[i]) {
           checkElems[i].addEventListener("change", function () {
             if (this.checked) {
@@ -284,7 +315,7 @@ function select() {
       });
     }
   } catch (e) {
-    alert("select function: " + e);
+    alert("select function: " + e.message);
   }
 }
 
@@ -316,30 +347,41 @@ function addEventBtnStatus() {
 }
 
 //func save to storage local
-function saveToStorage(arr) {
+function saveToStorage(name, data) {
   try {
-    chrome.storage.local.set({ questions: arr });
+    if (chrome !== undefined && chrome.storage) {
+      chrome.storage.local.set({ [name]: data });
+    } else {
+      alert("Error: Chrome not exist");
+    }
   } catch (e) {
     alert("save function: " + e);
   }
 }
 
-//func load question html in storage local
-function loadToStorage() {
-  try {
-    if (chrome !== undefined && chrome.storage) {
-      chrome.storage.local.get(["questions"], function (result) {
-        if (result.questions) {
-          arr = result.questions;
-          // console.log("Array loaded from storage:", arr);
-        }
-      });
-    } else {
-      console.log("chrome not exist");
+//func load data in storage local
+function getFromStorage(key) {
+  return new Promise((resolve, reject) => {
+    try {
+      if (typeof chrome !== "undefined" && chrome.storage) {
+        chrome.storage.local.get([key], function (result) {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+          } else {
+            if (result[key] !== undefined) {
+              resolve(result[key]);
+            } else {
+              resolve(null);
+            }
+          }
+        });
+      } else {
+        reject(new Error("Chrome storage is not available"));
+      }
+    } catch (e) {
+      reject(new Error(e.message));
     }
-  } catch (e) {
-    alert("load from storage function 214: " + e);
-  }
+  });
 }
 
 //func interval
@@ -372,6 +414,7 @@ function interval() {
     }, interval);
   }
   intervalEventA();
+  intervalBtnNext();
 }
 
 //start

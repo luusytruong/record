@@ -1,115 +1,207 @@
-//
 let arr = [];
-//
-function saveToStorage() {
-  chrome.storage.local.set({ questions: arr }, function () {
-    console.log("Array saved to storage:", arr);
-  });
-}
-//
-function loadToStorage() {
-  try {
-    if (chrome !== undefined && chrome.storage) {
-      chrome.storage.local.get(["questions"], function (result) {
-        if (result.questions) {
-          arr = result.questions;
-          load();
-        } else {
-          toast("Warning", "Data not found");
-        }
-      });
-    } else {
-      toast("Error", "Chrome not exist");
+let json = null;
+
+//func save data to storage
+function saveToStorage(key, data) {
+  return new Promise((resolve, reject) => {
+    try {
+      if (chrome !== undefined && chrome.storage) {
+        chrome.storage.local.set({ [key]: data }, () => {
+          if (chrome.runtime.lastError) {
+            reject(new Error(chrome.runtime.lastError));
+          } else {
+            resolve(true);
+          }
+        });
+      } else {
+        reject(new Error("Chrome is not available"));
+      }
+    } catch (e) {
+      reject(new Error(e.message));
     }
-  } catch (e) {
-    toast("Error", "Load to storage: " + e);
-  }
-}
-//
-let bC = document.getElementById("btn-clear");
-//
-if (bC) {
-  bC.addEventListener("click", () => {
-    document.querySelector(".form").classList.add("active");
   });
 }
-//
-let bN = document.getElementById("btn-no");
-//
-if (bN) {
-  bN.addEventListener("click", () => {
-    document.querySelector(".form").classList.add("animate");
+
+//func load data from storage
+function getFromStorage(key) {
+  return new Promise((resolve, reject) => {
+    try {
+      if (chrome !== undefined && chrome.storage) {
+        chrome.storage.local.get([key], (data) => {
+          if (chrome.runtime.lastError) {
+            reject(new Error(chrome.runtime.lastError));
+          } else {
+            if (data[key] != undefined) {
+              resolve(data[key]);
+            } else {
+              resolve(null);
+            }
+          }
+        });
+      } else {
+        reject(new Error("Chrome storage is not available"));
+      }
+    } catch (e) {
+      reject(new Error(e.message));
+    }
+  });
+}
+
+//btn upload show
+const bU = document.getElementById("btn-upload");
+if (bU) {
+  bU.addEventListener("click", async () => {
+    json = await getFromStorage("json");
+    const inputField = document.getElementById("upload-text");
+    if (inputField) {
+      inputField.value = json;
+      toast("Successful", "JSON have been loaded");
+      document.getElementById("upload").classList.add("active");
+    }
+  });
+}
+
+//btn upload send
+const bUS = document.getElementById("btn-send");
+if (bUS) {
+  bUS.addEventListener("click", async () => {
+    const inputField = document.getElementById("upload-text");
+    json = inputField.value;
+    if (saveToStorage("json", json))
+      toast("Successful", "JSON saved to storage");
+  });
+}
+
+//btn upload cancel
+const bUC = document.getElementById("btn-cancel-u");
+if (bUC) {
+  bUC.addEventListener("click", () => {
+    const form = document.getElementById("upload");
+    form.classList.add("animate");
     setTimeout(() => {
-      document.querySelector(".form").classList.remove("active");
-      document.querySelector(".form").classList.remove("animate");
-    }, 600);
+      form.className = "";
+    }, 500);
   });
 }
-//
-let bY = document.getElementById("btn-yes");
-//
-if (bY) {
-  bY.addEventListener("click", () => {
-    arr = [];
-    saveToStorage();
-    loadToStorage();
-    document.querySelector(".form").classList.add("animate");
-    toast("Successful", "All question have been deleted");
+
+//btn show setting
+const bS = document.getElementById("btn-setting");
+if (bS) {
+  bS.addEventListener("click", () => {
+    const settingForm = document.getElementById("setting");
+    settingForm.classList.add("active");
+  });
+}
+
+//click handler input checkbox form setting
+const bHL = document.getElementById("high-light");
+let highLight;
+let ok = false;
+if (bHL) {
+  bHL.addEventListener("change", async () => {
+    if (bHL.checked) {
+      if (saveToStorage("high_light", 1)) toast("Successful", "High light on");
+
+      highLight = await getFromStorage("high_light");
+      console.log("on" + highLight);
+    } else {
+      if (saveToStorage("high_light", 0)) toast("Successful", "High light off");
+      saveToStorage("json", "");
+      highLight = await getFromStorage("high_light");
+      console.log("off" + highLight);
+    }
+    call();
+  });
+}
+
+//btn setting cancel
+const bSC = document.getElementById("btn-cancel");
+if (bSC) {
+  bSC.addEventListener("click", () => {
+    const settingForm = document.getElementById("setting");
+    settingForm.classList.add("animate");
     setTimeout(() => {
-      document.querySelector(".form").classList.remove("active");
-      document.querySelector(".form").classList.remove("animate");
-    }, 600);
+      settingForm.className = "";
+    }, 500);
   });
 }
-//
-let bE = document.getElementById("btn-expand");
-//
+
+//btn expand
+const bE = document.getElementById("btn-expand");
 if (bE) {
   bE.addEventListener("click", () => {
     chrome.runtime.openOptionsPage();
   });
 }
-//
-let bF = document.getElementById("btn-filter");
-//
+
+//btn filter
+const bF = document.getElementById("btn-filter");
 if (bF) {
   bF.addEventListener("click", () => {
-    let url = "https://luusytruong.github.io/deduplicates/";
+    const url = "https://luusytruong.github.io/deduplicates/";
     window.open(url, "_blank");
   });
 }
-//
-function load() {
-  let qC = document.getElementById("question-container");
-  qC.innerText = "";
-  arr.forEach((html, i) => {
-    if (html != null) {
-      let q = document.createElement("div");
-      q.className = "question";
-      q.innerHTML = html;
-      qC.appendChild(q);
-    }
+
+//btn show clear form
+const bC = document.getElementById("btn-clear");
+if (bC) {
+  bC.addEventListener("click", () => {
+    document.querySelector(".form").classList.add("active");
   });
+}
+
+//btn no form clear
+const bN = document.getElementById("btn-no");
+if (bN) {
+  bN.addEventListener("click", () => {
+    document.querySelector(".form").classList.add("animate");
+    setTimeout(() => {
+      document.querySelector(".form").className = "form";
+    }, 600);
+  });
+}
+
+//btn yes form clear
+const bY = document.getElementById("btn-yes");
+if (bY) {
+  bY.addEventListener("click", async () => {
+    arr = [];
+    saveToStorage("questions", arr);
+    call("question");
+    document.querySelector(".form").classList.add("animate");
+    setTimeout(() => {
+      document.querySelector(".form").classList.remove("active");
+      document.querySelector(".form").classList.remove("animate");
+    }, 600);
+  });
+}
+
+//func load question and show
+function load(arr) {
+  if (arr !== null) {
+    const qC = document.getElementById("question-container");
+    qC.innerText = "";
+    arr.forEach((html, i) => {
+      if (html != null) {
+        const q = document.createElement("div");
+        q.className = "question";
+        q.innerHTML = html;
+        qC.appendChild(q);
+      }
+    });
+  }
   toast("Successful", "All question have been loaded");
 }
+
 //toast
 let timeoutId;
 function toast(status, content) {
   try {
-    function timeout(option) {
-      if (option === "call") {
-        timeoutId = setTimeout(() => {
-          toastElem.className = `${status.toLowerCase()} animate`;
-        }, 1300);
-      } else {
-        clearTimeout(timeoutId);
-      }
-    }
-
     let icon = null;
     let toastElem = document.getElementById("toast");
     toastElem.className = ``;
-    timeout();
+    clearTimeout(timeoutId);
     setTimeout(() => {
       if (status === "Successful") {
         icon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg>`;
@@ -122,29 +214,32 @@ function toast(status, content) {
       toastElem.querySelector(".toast-icon").innerHTML = icon;
       toastElem.querySelector(".toast-title").innerText = status;
       toastElem.querySelector(".toast-content").innerText = content;
-      timeout("call");
-    }, 1);
+      timeoutId = setTimeout(() => {
+        toastElem.className = `${status.toLowerCase()} animate`;
+      }, 1300);
+    }, 8);
   } catch (e) {
     alert("Error: " + e);
   }
 }
-//
-loadToStorage();
-//func upload blob to server
-async function upload(blobUrl) {
-  try {
-    const response = await fetch(blobUrl);
-    const blob = await response.blob();
-    const formData = new FormData();
-    formData.append("file", blob);
-    const uploadResponse = await fetch("http://localhost/api/temp.php", {
-      method: "POST",
-      body: formData,
-    });
-    const data = await uploadResponse.json();
-    console.log(data);
-    return data;
-  } catch (e) {
-    console.error(e);
+
+//func initialize
+const call = async (option) => {
+  if (option === "question") {
+    arr = await getFromStorage("questions");
+    load(arr);
+  } else {
+    highLight = await getFromStorage("high_light");
+    if (highLight) {
+      bU.classList.add("show");
+      bHL.checked = true;
+    } else {
+      bU.className = "btn";
+      bHL.checked = false;
+    }
   }
-}
+};
+
+//start
+call("question");
+call();
