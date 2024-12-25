@@ -106,7 +106,7 @@ if (bHL) {
       console.log("on" + highLight);
     } else {
       if (saveToStorage("high_light", 0)) toast("Successful", "High light off");
-      saveToStorage("json", "");
+      saveToStorage("json", null);
       highLight = await getFromStorage("high_light");
       console.log("off" + highLight);
     }
