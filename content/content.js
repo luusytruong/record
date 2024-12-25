@@ -39,6 +39,7 @@ body > p {
     animation: animate 0.4s ease !important;
 }
 .highlight {
+    color: #e7f0fe;
     font-weight: 400 !important;
     background-color: transparent !important;
 }
