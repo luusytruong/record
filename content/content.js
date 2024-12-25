@@ -40,7 +40,6 @@ body > p {
 }
 .highlight {
     color: #00296A !important;
-    font-weight: 400 !important;
     background-color: transparent !important;
 }
 .ictu-page-test__test-panel__user-info>div>div:first-child {
