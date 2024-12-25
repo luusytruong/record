@@ -39,7 +39,7 @@ body > p {
     animation: animate 0.4s ease !important;
 }
 .highlight {
-    color: #00296A !important;
+    color: #343dff !important;
     background-color: transparent !important;
 }
 .ictu-page-test__test-panel__user-info>div>div:first-child {
@@ -250,43 +250,61 @@ async function load() {
 }
 
 //func select answer
-let dataJson = null;
+let dataJson = [];
 async function select() {
   try {
     console.log("%c🔴 debug select", styleE);
-    ci = null;
-    cis = [];
-    let correctA = null;
     let q = document.querySelector(".present-single-question__head p");
+    let correctArr = [];
     console.log(q.innerText.trim());
     if (q) {
       dataJson = await getFromStorage("json");
-      if (dataJson != null) {
-        dataJson = JSON.parse(dataJson);
+      if (dataJson != null && dataJson.length > 0) {
         console.log(dataJson);
-        dataJson.forEach((question) => {
-          if (q.innerText.trim() === question.content) {
-            correctA = question.correctAnswer;
+        try {
+          if (Array.isArray(dataJson)) {
+            dataJson.forEach((question) => {
+              if (q.innerText.trim() === question.content) {
+                correctArr = question.arrAnswers;
+              }
+            });
+          } else {
+            console.log("%cinvalid data", "color: red");
           }
-        });
+        } catch (e) {
+          console.log("%cinvalid data: " + e.message, "color: red");
+        }
       } else {
-        console.log("json rong");
+        console.log("%cdata from storage empty", "color: red");
       }
     }
+    ci = null;
+    cis = [];
     let ops = document.querySelectorAll(".present-single-question__body label");
-    if (ops.length >= 0) {
+    if (ops.length > 0) {
       let checkElems = document.querySelectorAll(
         '.present-single-question__body input[type="checkbox"]'
       );
-      ops.forEach(async (ans, i) => {
+      ops.forEach((ans, i) => {
         //check correct
-        if (correctA != null) {
+        if (correctArr != null && correctArr.length > 0) {
           let answer = ans.querySelector("p");
-          if (answer && answer.innerText.trim() === correctA) {
-            answer.classList.add("highlight");
-            answer.innerText += "";
+          if (answer) {
+            let answerText = answer.innerText.trim();
+            if (correctArr.includes(answerText)) {
+              answer.classList.add("highlight");
+              answer.innerText += "";
+              console.log("correct: " + answerText);
+            } else {
+              console.log("wrong: " + answerText);
+            }
+          } else {
+            console.log("answer not found");
           }
-        } //
+        } else {
+          console.log("%ccorrect data empty", "color: red");
+        }
+        //
         if (checkElems[i]) {
           checkElems[i].addEventListener("change", function () {
             if (this.checked) {
@@ -302,12 +320,6 @@ async function select() {
           ans.addEventListener("click", () => {
             ci = i;
             if (ci !== null) {
-              console.log(
-                i,
-                ans.querySelector("p")
-                  ? ans.querySelector("p")
-                  : ans.querySelector("img")
-              );
               load();
             }
           });
@@ -414,6 +426,7 @@ function interval() {
     }, interval);
   }
   intervalEventA();
+  intervalBtnNext();
 }
 
 //start

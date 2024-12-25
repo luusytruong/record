@@ -51,36 +51,25 @@ function getFromStorage(key) {
 const bU = document.getElementById("btn-upload");
 if (bU) {
   bU.addEventListener("click", async () => {
-    json = await getFromStorage("json");
-    const inputField = document.getElementById("upload-text");
-    if (inputField) {
-      inputField.value = json;
-      toast("Successful", "JSON have been loaded");
-      document.getElementById("upload").classList.add("active");
+    let copyText = await navigator.clipboard.readText();
+    try {
+      if (copyText !== "") {
+        copyText = JSON.parse(copyText);
+        if (Array.isArray(copyText)) {
+          if (await saveToStorage("json", copyText)) {
+            toast("Successful", "JSON have been uploaded");
+            console.log(copyText);
+          } else {
+            toast("Error", "JSON not uploaded");
+          }
+        } else {
+          toast("Error", "Non-JSON data");
+        }
+      }
+    } catch (e) {
+      console.log("%cError: " + e.message, "color: red;");
+      toast("Error", e.message);
     }
-  });
-}
-
-//btn upload send
-const bUS = document.getElementById("btn-send");
-if (bUS) {
-  bUS.addEventListener("click", async () => {
-    const inputField = document.getElementById("upload-text");
-    json = inputField.value;
-    if (saveToStorage("json", json))
-      toast("Successful", "JSON saved to storage");
-  });
-}
-
-//btn upload cancel
-const bUC = document.getElementById("btn-cancel-u");
-if (bUC) {
-  bUC.addEventListener("click", () => {
-    const form = document.getElementById("upload");
-    form.classList.add("animate");
-    setTimeout(() => {
-      form.className = "";
-    }, 500);
   });
 }
 
