@@ -40,7 +40,7 @@ body > p {
 }
 .highlight {
     color: #021431;
-    font-weight: 400 !important;
+    font-weight: 500 !important;
     background-color: transparent !important;
 }
 .ictu-page-test__test-panel__user-info>div>div:first-child {
@@ -285,7 +285,7 @@ async function select() {
           let answer = ans.querySelector("p");
           if (answer && answer.innerText.trim() === correctA) {
             answer.classList.add("highlight");
-            answer.innerText += ".";
+            answer.innerText += "";
           }
         } //
         if (checkElems[i]) {
