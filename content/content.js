@@ -39,8 +39,8 @@ body > p {
     animation: animate 0.4s ease !important;
 }
 .highlight {
-    color: #021431;
-    font-weight: 500 !important;
+    color: #00296A !important;
+    font-weight: 400 !important;
     background-color: transparent !important;
 }
 .ictu-page-test__test-panel__user-info>div>div:first-child {
