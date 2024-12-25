@@ -19,6 +19,7 @@
     --padding-s: 12px;
     --padding-m: 16px;
     --padding-l: 20px;
+    --padding-xl: 24px;
     --margin-s: 12px;
     --margin-m: 16px;
     --margin-l: 20px;
@@ -98,7 +99,7 @@ strong {
 
 @keyframes toastShow {
     0% {
-        transform: translate(-50%, 100%);
+        transform: translate(-50%, calc(100% + 40px));
     }
 
     100% {
@@ -112,24 +113,24 @@ strong {
     }
 
     100% {
-        transform: translate(-50%, 100%);
+        transform: translate(-50%, calc(100% + 40px));
     }
 }
 
 #toast.successful.animate {
-    animation: toastHide .8s ease forwards;
+    animation: toastHide 1.2s ease forwards;
 }
 
 #toast.error.animate {
-    animation: toastHide .8s ease forwards;
+    animation: toastHide 1.2s ease forwards;
 }
 
 #toast.warning.animate {
-    animation: toastHide .8s ease forwards;
+    animation: toastHide 1.2s ease forwards;
 }
 
 #toast.successful {
-    animation: toastShow .8s ease forwards;
+    animation: toastShow 0.8s ease forwards;
 
     svg {
         fill: #00BB00;
@@ -137,7 +138,7 @@ strong {
 }
 
 #toast.error {
-    animation: toastShow .8s ease forwards;
+    animation: toastShow 0.8s ease forwards;
 
     svg {
         fill: #EE0000;
@@ -145,7 +146,7 @@ strong {
 }
 
 #toast.warning {
-    animation: toastShow .8s ease forwards;
+    animation: toastShow 0.8s ease forwards;
 
     svg {
         fill: #FFA500;
@@ -157,7 +158,8 @@ strong {
     position: fixed;
     left: 50%;
     bottom: 0;
-    width: 376px;
+    width: max-content;
+    max-width: 768px;
     transform: translate(-50%, 0);
     background-color: #FFF;
     padding: var(--padding-s);
@@ -166,7 +168,7 @@ strong {
     box-shadow: 0 0 40px #0000000d;
     display: flex;
     align-items: center;
-    transform: translate(-50%, 100%);
+    transform: translate(-50%, calc(100% + 40px));
     z-index: 101;
 }
 
@@ -190,7 +192,7 @@ strong {
 }
 
 .toast-content {
-    white-space: nowrap;
+    white-space: wrap;
     user-select: none !important;
     font-size: 11px;
 }
@@ -608,23 +610,22 @@ strong {
 /* question */
 .list-question {
     display: flex;
-    flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
+    flex-wrap: wrap;
+    margin: calc(var(--margin-s) / 2 * -1);
 }
 
 .question {
     background-color: #FFF;
     padding: var(--padding-s);
     border-radius: 12px;
-    margin-bottom: var(--margin-s);
+    margin: calc(var(--margin-s) / 2);
     display: flex;
     flex-direction: column;
     /* box-shadow: 0 0 10px #00000010; */
-}
-
-.list-question>:last-child {
-    margin: 0;
+    flex: 1 0 calc(100% / 3 - var(--margin-s));
+    min-width: 376px;
 }
 
 .question-head {

@@ -65,6 +65,8 @@ if (bU) {
         } else {
           toast("Error", "Non-JSON data");
         }
+      } else {
+        toast("Warning", "Clipboard empty");
       }
     } catch (e) {
       console.log("%cError: " + e.message, "color: red;");
@@ -205,7 +207,7 @@ function toast(status, content) {
       toastElem.querySelector(".toast-content").innerText = content;
       timeoutId = setTimeout(() => {
         toastElem.className = `${status.toLowerCase()} animate`;
-      }, 1300);
+      }, 2400);
     }, 8);
   } catch (e) {
     alert("Error: " + e);

@@ -426,7 +426,6 @@ function interval() {
     }, interval);
   }
   intervalEventA();
-  intervalBtnNext();
 }
 
 //start
