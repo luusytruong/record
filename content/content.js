@@ -195,7 +195,6 @@ async function getQuestion(qi, q, img, objectOption) {
         </div>
         <div class="question-body">
         ${optionsHtml}
-        <br>
         </div>
     `;
   } catch (e) {

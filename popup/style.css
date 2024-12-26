@@ -682,6 +682,16 @@ strong {
     overflow: hidden;
 }
 
+.answer p,
+.question-content {
+    display: -webkit-box;
+    line-clamp: 1;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .answer.choose p {
     font-weight: bold;
     color: #00BB00;
