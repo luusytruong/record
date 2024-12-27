@@ -1,5 +1,5 @@
 //declare
-let css = `
+const css = `
 * {
     user-select: text !important;
     -moz-user-select: text !important;
@@ -38,7 +38,7 @@ body > p {
 .animate {
     animation: animate 0.4s ease !important;
 }
-.highlight {
+.hight-light-text * {
     color: #343dff !important;
     background-color: transparent !important;
 }
@@ -51,9 +51,9 @@ body > p {
     user-select: none !important;
 }
 `;
-let lba = ["A.", "B.", "C.", "D."];
-let ci = null;
-let cis = [];
+const lba = ["A.", "B.", "C.", "D."];
+let chooseIndex = null;
+let chooseIndexs = [];
 let arr = [];
 let nav = null;
 let parentAvt = null;
@@ -81,7 +81,7 @@ const styleE = `
 
 //func append css
 function appendCSS(style) {
-  let css = document.createElement("style");
+  const css = document.createElement("style");
   css.innerHTML = style;
   css.id = "syluu-style";
   document.head.appendChild(css);
@@ -140,23 +140,23 @@ async function upload(blobUrl) {
 async function getQuestion(qi, q, img, objectOption) {
   try {
     async function op() {
-      let dataOj = objectOption.data;
+      const dataOj = objectOption.data;
+      console.log("==============================================");
       return Promise.all(
         dataOj.map(async (option, i) => {
           let isCorrect = null;
-          if (ci !== null) {
-            isCorrect = i === ci;
+          if (chooseIndex !== null) {
+            isCorrect = i === chooseIndex;
           } else {
-            isCorrect = cis.includes(i);
+            isCorrect = chooseIndexs.includes(i);
           }
           let optionImg;
           if (objectOption.key !== "text") {
             optionImg = await upload(option.src);
           }
           console.log(
-            "%c" + (isCorrect ? "correct: " : "wrong: "),
-            `color: ${isCorrect ? "#00FF00" : "#FF0000"}; font-weight: bold;`,
-            option.innerText
+            `%c${lba[i]} ${option.innerText}`,
+            `color: ${isCorrect ? "#00EE00" : ""};`
           );
           const optionHtml =
             objectOption.key === "text"
@@ -205,37 +205,49 @@ async function getQuestion(qi, q, img, objectOption) {
 //func load question in html
 async function load() {
   try {
-    let qi = parseInt(
+    const questionNum = parseInt(
       document
         .querySelector(".present-single-question__head legend")
         .innerText.replaceAll("Câu ", "")
         .replaceAll(":", "")
     );
-    let q = document.querySelector(".present-single-question__head p");
-    let img = document.querySelector(
-      ".present-single-question__head p + figure img"
+    const questionContent = document.querySelector(
+      ".present-single-question__head p"
     );
-    let ops = Array.from(
-      document.querySelectorAll(
-        ".present-single-question__body label>div p:first-child"
-      )
+    const questionImg = document.querySelector(
+      ".present-single-question__head img"
+    );
+    const options = Array.from(
+      document.querySelectorAll(".present-single-question__body label")
     );
     let objectOption = null;
-    if (q) {
-      if (ops.length) {
-        objectOption = { key: "text", data: ops };
-        arr[qi - 1] = await getQuestion(qi, q, img, objectOption);
-      } else {
-        ops = Array.from(
-          document.querySelectorAll(
-            "mat-radio-group .question-type-radio__answer-content img"
-          )
-        );
-        if (ops.length) {
-          objectOption = { key: "img", data: ops };
-          arr[qi - 1] = await getQuestion(qi, q, img, objectOption);
+    if (questionContent) {
+      for (const option of options) {
+        if (option.innerText !== "") {
+          objectOption = { key: "text", data: options };
+          arr[questionNum - 1] = await getQuestion(
+            questionNum,
+            questionContent,
+            questionImg,
+            objectOption
+          );
+          break;
         } else {
-          alert("Không phải chữ hoặc ảnh");
+          options = Array.from(
+            document.querySelectorAll(".present-single-question__body img")
+          );
+          if (options.length) {
+            objectOption = { key: "img", data: options };
+            arr[questionNum - 1] = await getQuestion(
+              questionNum,
+              questionContent,
+              questionImg,
+              objectOption
+            );
+          } else {
+            alert("Không phải chữ hoặc ảnh");
+          }
+          break;
         }
       }
       saveToStorage("questions", arr);
@@ -244,7 +256,7 @@ async function load() {
       alert("câu này bị lỗi, dùng CTRL + S để lưu lại rồi gửi cho tao");
     }
   } catch (e) {
-    alert("load to save function: " + e);
+    alert("load to save function: " + e.message);
   }
 }
 
@@ -253,7 +265,7 @@ let dataJson = [];
 async function select() {
   try {
     console.log("%c🔴 debug select", styleE);
-    let q = document.querySelector(".present-single-question__head p");
+    const q = document.querySelector(".present-single-question__head p");
     let correctArr = [];
     console.log(q.innerText.trim());
     if (q) {
@@ -277,22 +289,22 @@ async function select() {
         console.log("%cdata from storage empty", "color: red");
       }
     }
-    ci = null;
-    cis = [];
-    let ops = document.querySelectorAll(".present-single-question__body label");
+    chooseIndex = null;
+    chooseIndexs = [];
+    const ops = document.querySelectorAll(
+      ".present-single-question__body label"
+    );
     if (ops.length > 0) {
-      let checkElems = document.querySelectorAll(
+      const checkElems = document.querySelectorAll(
         '.present-single-question__body input[type="checkbox"]'
       );
       ops.forEach((ans, i) => {
         //check correct
         if (correctArr != null && correctArr.length > 0) {
-          let answer = ans.querySelector("p");
-          if (answer) {
-            let answerText = answer.innerText.trim();
+          if (ans) {
+            const answerText = ans.innerText.trim();
             if (correctArr.includes(answerText)) {
-              answer.classList.add("highlight");
-              answer.innerText += "";
+              ans.classList.add("hight-light-text");
               console.log("correct: " + answerText);
             } else {
               console.log("wrong: " + answerText);
@@ -307,18 +319,18 @@ async function select() {
         if (checkElems[i]) {
           checkElems[i].addEventListener("change", function () {
             if (this.checked) {
-              if (!cis.includes(i)) {
-                cis.push(i);
+              if (!chooseIndexs.includes(i)) {
+                chooseIndexs.push(i);
               }
             } else {
-              cis = cis.filter((index) => index !== i);
+              chooseIndexs = chooseIndexs.filter((index) => index !== i);
             }
             load();
           });
         } else {
           ans.addEventListener("click", () => {
-            ci = i;
-            if (ci !== null) {
+            chooseIndex = i;
+            if (chooseIndex !== null) {
               load();
             }
           });
@@ -366,7 +378,7 @@ function saveToStorage(name, data) {
       alert("Error: Chrome not exist");
     }
   } catch (e) {
-    alert("save function: " + e);
+    alert("save function: " + e.message);
   }
 }
 
@@ -397,11 +409,11 @@ function getFromStorage(key) {
 
 //func interval
 function interval() {
-  let interval = 1000;
+  const interval = 1000;
   console.clear();
   function intervalBtnNext() {
     console.log("%c🟡 wait add event btn ...", styleW);
-    let intervalId = setInterval(() => {
+    const intervalId = setInterval(() => {
       nav = document.querySelector(".ictu-page-test__test-panel__single-nav");
       if (nav) {
         console.log("%c🟢 add event btn styleSful", styleS);
@@ -414,8 +426,8 @@ function interval() {
   }
   function intervalEventA() {
     console.log("%c🟡 wait add event logo ...", styleW);
-    let intervalId = setInterval(() => {
-      let a = document.querySelector(".m-header a");
+    const intervalId = setInterval(() => {
+      const a = document.querySelector(".m-header a");
       if (a) {
         console.log("%c🟢 add event logo styleSful", styleS);
         //call
@@ -424,7 +436,7 @@ function interval() {
       }
     }, interval);
   }
-  intervalEventA();
+  intervalBtnNext();
 }
 
 //start
