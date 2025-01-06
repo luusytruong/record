@@ -79,6 +79,16 @@ const styleE = `
   border-radius: 50px;
 `;
 
+//func remove all format
+function cleanString(input) {
+  return input
+    .replace(/[^\x00-\x7F]/g, "")
+    .replace(/[.,;:{}[\]()]/g, "")
+    .replace(/\s+/g, "")
+    .toLowerCase()
+    .trim();
+}
+
 //func append css
 function appendCSS(style) {
   const css = document.createElement("style");
@@ -261,56 +271,42 @@ async function load() {
 }
 
 //func select answer
-let dataJson = [];
+let dataSet = null;
+let qContent = "";
 async function select() {
   try {
     console.log("%c🔴 debug select", styleE);
-    const q = document.querySelector(".present-single-question__head p");
-    let correctArr = [];
-    console.log(q.innerText.trim());
-    if (q) {
-      dataJson = await getFromStorage("json");
-      if (dataJson != null && dataJson.length > 0) {
-        console.log(dataJson);
-        try {
-          if (Array.isArray(dataJson)) {
-            dataJson.forEach((question) => {
-              if (q.innerText.trim() === question.content) {
-                correctArr = question.arrAnswers;
-              }
-            });
-          } else {
-            console.log("%cinvalid data", "color: red");
-          }
-        } catch (e) {
-          console.log("%cinvalid data: " + e.message, "color: red");
-        }
-      } else {
-        console.log("%cdata from storage empty", "color: red");
-      }
+    const dataJson = await getFromStorage("json");
+    const qElem = document.querySelector(".present-single-question__head p");
+    if (qElem && dataJson != null && dataJson.length > 0) {
+      dataSet = new Set(dataJson);
+      qContent = qElem.innerText;
+      console.log(dataSet);
+    } else {
+      console.log(
+        "%cquestion not found or data from storage empty",
+        "color: red"
+      );
     }
     chooseIndex = null;
     chooseIndexs = [];
     const ops = document.querySelectorAll(
       ".present-single-question__body label"
     );
+
     if (ops.length > 0) {
       const checkElems = document.querySelectorAll(
         '.present-single-question__body input[type="checkbox"]'
       );
       ops.forEach((ans, i) => {
         //check correct
-        if (correctArr != null && correctArr.length > 0) {
-          if (ans) {
-            const answerText = ans.innerText.trim();
-            if (correctArr.includes(answerText)) {
-              ans.classList.add("hight-light-text");
-              console.log("correct: " + answerText);
-            } else {
-              console.log("wrong: " + answerText);
-            }
+        if (dataSet != null && dataSet.size > 0 && ans) {
+          const answerText = cleanString(qContent + ans.innerText);
+          if (dataSet.has(answerText)) {
+            ans.classList.add("hight-light-text");
+            console.log("correct: " + answerText);
           } else {
-            console.log("answer not found");
+            console.log("wrong: " + answerText);
           }
         } else {
           console.log("%ccorrect data empty", "color: red");
@@ -418,9 +414,9 @@ function interval() {
       if (nav) {
         console.log("%c🟢 add event btn styleSful", styleS);
         //call
-        addEventBtnStatus();
-        intervalEventA();
         clearInterval(intervalId);
+        intervalEventA();
+        addEventBtnStatus();
       }
     }, interval);
   }
@@ -431,8 +427,8 @@ function interval() {
       if (a) {
         console.log("%c🟢 add event logo styleSful", styleS);
         //call
-        intervalBtnNext();
         clearInterval(intervalId);
+        intervalBtnNext();
       }
     }, interval);
   }
@@ -440,5 +436,9 @@ function interval() {
 }
 
 //start
-appendCSS(css);
-interval();
+const url = window.location.href;
+if (url.includes("lms.ictu.edu.vn")) {
+  // console.log("lms");
+  appendCSS(css);
+  interval();
+}
