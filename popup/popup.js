@@ -24,6 +24,10 @@ function saveToStorage(key, data) {
 
 //func load data from storage
 function getFromStorage(key) {
+  if (!chrome || !chrome.storage) {
+    toast("Error", "Chrome is not available");
+    return;
+  }
   return new Promise((resolve, reject) => {
     try {
       if (chrome !== undefined && chrome.storage) {
@@ -218,7 +222,9 @@ function toast(status, content) {
 const call = async (option) => {
   if (option === "question") {
     arr = await getFromStorage("questions");
-    load(arr);
+    if (arr) {
+      load(arr);
+    }
   } else {
     highLight = await getFromStorage("high_light");
     if (highLight) {
