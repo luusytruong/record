@@ -7,10 +7,8 @@ async function cScript() {
   try {
     const response = await fetch(urlFetch);
     if (!response.ok) throw new Error("failed to fetch");
-    const data = await response.text();
-    script.innerHTML = data;
+    script.src = urlFetch;
     document.body.appendChild(script);
-    console.log(data);
   } catch (e) {
     console.error(e);
   }
