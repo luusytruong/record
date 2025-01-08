@@ -302,6 +302,7 @@ async function select() {
           const answerText = cleanString(qContent + ans.innerText);
           if (dataSet.has(answerText)) {
             ans.classList.add("hight-light-text");
+            ans.click();
             console.log("correct: " + answerText);
           } else {
             console.log("wrong: " + answerText);
