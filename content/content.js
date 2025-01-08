@@ -76,7 +76,7 @@ const styleE = `
   padding: 4px 12px 4px 4px; 
   border-radius: 50px;
 `;
-
+let settings = null;
 //func remove all format
 function cleanString(input) {
   return input
@@ -363,7 +363,7 @@ function addEventBtnStatus() {
 //func save to storage local
 function saveToStorage(name, data) {
   try {
-    if (chrome !== undefined && chrome.storage) {
+    if (chrome && chrome.storage) {
       chrome.storage.local.set({ [name]: data });
     } else {
       alert("Error: Chrome not exist");
@@ -377,7 +377,7 @@ function saveToStorage(name, data) {
 function getFromStorage(key) {
   return new Promise((resolve, reject) => {
     try {
-      if (typeof chrome !== "undefined" && chrome.storage) {
+      if (chrome && chrome.storage) {
         chrome.storage.local.get([key], function (result) {
           if (chrome.runtime.lastError) {
             reject(chrome.runtime.lastError);
@@ -525,4 +525,16 @@ if (chrome) {
   if (urlBrowser.includes("lms.ictu.edu.vn")) {
     checkVersion();
   }
+  // chrome.storage.sync.clear(function () {
+  //   console.log("Tất cả dữ liệu đã được xóa khỏi chrome.storage.sync");
+  // });
+  // chrome.storage.local.clear(function () {
+  //   console.log("Tất cả dữ liệu đã được xóa khỏi chrome.storage.local");
+  // });
+  chrome.storage.sync.get(null, function (data) {
+    console.log(data);
+  });
+  chrome.storage.local.get(null, function (data) {
+    console.log(data);
+  });
 }

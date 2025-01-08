@@ -1,11 +1,12 @@
 let arr = [];
-let json = null;
+let settings = [];
+let json = [];
 
 //func save data to storage
 function saveToStorage(key, data) {
   return new Promise((resolve, reject) => {
     try {
-      if (chrome !== undefined && chrome.storage) {
+      if (chrome && chrome.storage) {
         chrome.storage.local.set({ [key]: data }, () => {
           if (chrome.runtime.lastError) {
             reject(new Error(chrome.runtime.lastError));
@@ -24,13 +25,9 @@ function saveToStorage(key, data) {
 
 //func load data from storage
 function getFromStorage(key) {
-  if (!chrome || !chrome.storage) {
-    toast("Error", "Chrome is not available");
-    return;
-  }
   return new Promise((resolve, reject) => {
     try {
-      if (chrome !== undefined && chrome.storage) {
+      if (chrome && chrome.storage) {
         chrome.storage.local.get([key], (data) => {
           if (chrome.runtime.lastError) {
             reject(new Error(chrome.runtime.lastError));
@@ -82,38 +79,38 @@ if (bU) {
 //btn show setting
 const bS = document.getElementById("btn-setting");
 if (bS) {
-  bS.addEventListener("click", () => {
+  bS.addEventListener("click", async () => {
+    settings = await getFromStorage("settings");
+    if (settings) {
+      document.getElementById("mark").checked = settings.mark;
+      document.getElementById("auto-select").checked = settings.auto;
+    }
     const settingForm = document.getElementById("setting");
     settingForm.classList.add("active");
   });
 }
 
-//click handler input checkbox form setting
-const bHL = document.getElementById("high-light");
-let highLight;
-let ok = false;
-if (bHL) {
-  bHL.addEventListener("change", async () => {
-    if (bHL.checked) {
-      if (saveToStorage("high_light", 1)) toast("Successful", "High light on");
-
-      highLight = await getFromStorage("high_light");
-      console.log("on" + highLight);
-    } else {
-      if (saveToStorage("high_light", 0)) toast("Successful", "High light off");
-      saveToStorage("json", null);
-      highLight = await getFromStorage("high_light");
-      console.log("off" + highLight);
-    }
-    call();
-  });
-}
-
-//btn setting cancel
+//btn setting cancel and save setting data
+const settingForm = document.getElementById("setting");
 const bSC = document.getElementById("btn-cancel");
-if (bSC) {
-  bSC.addEventListener("click", () => {
-    const settingForm = document.getElementById("setting");
+const iCheckboxs = Array.from(document.querySelectorAll("label.option input"));
+if (settingForm && bSC && iCheckboxs.length) {
+  bSC.addEventListener("click", async () => {
+    const values = iCheckboxs.map((elem) => elem.checked);
+    const objSetting = {
+      toggle: 1,
+      mark: values[1] ? 1 : 0,
+      auto: values[2] ? 1 : 0,
+    };
+    console.log(objSetting);
+
+    const save = await saveToStorage("settings", objSetting);
+    if (save === true) {
+      toast("Successful", "Settings saved");
+    } else {
+      toast("Error", "Settings not saved");
+    }
+    //close form
     settingForm.classList.add("animate");
     setTimeout(() => {
       settingForm.className = "";
@@ -162,8 +159,8 @@ const bY = document.getElementById("btn-yes");
 if (bY) {
   bY.addEventListener("click", async () => {
     arr = [];
-    saveToStorage("questions", arr);
-    call("question");
+    await saveToStorage("questions", arr);
+    loading(arr);
     document.querySelector(".form").classList.add("animate");
     setTimeout(() => {
       document.querySelector(".form").classList.remove("active");
@@ -173,8 +170,8 @@ if (bY) {
 }
 
 //func load question and show
-function load(arr) {
-  if (arr !== null) {
+function display(arr) {
+  if (arr.length) {
     const qC = document.getElementById("question-container");
     qC.innerText = "";
     arr.forEach((html, i) => {
@@ -219,24 +216,18 @@ function toast(status, content) {
 }
 
 //func initialize
-const call = async (option) => {
-  if (option === "question") {
-    arr = await getFromStorage("questions");
-    if (arr) {
-      load(arr);
-    }
+const loading = async (arr) => {
+  if (!chrome || !chrome.storage) {
+    toast("Error", "Chrome is not available");
+    return;
+  }
+  arr = await getFromStorage("questions");
+  if (arr) {
+    display(arr);
   } else {
-    highLight = await getFromStorage("high_light");
-    if (highLight) {
-      bU.classList.add("show");
-      bHL.checked = true;
-    } else {
-      bU.className = "btn";
-      bHL.checked = false;
-    }
+    toast("Warning", "No question data");
   }
 };
 
 //start
-call("question");
-call();
+loading(arr);

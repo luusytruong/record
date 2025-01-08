@@ -588,13 +588,13 @@ strong {
     width: 14px;
 }
 
-#btn-upload {
+/* #btn-upload {
     display: none;
 }
 
 #btn-upload.show {
     display: flex;
-}
+} */
 
 .dangerous :first-child {
     margin: 0;
