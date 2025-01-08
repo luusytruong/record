@@ -81,7 +81,7 @@ const styleE = `
 function cleanString(input) {
   return input
     .replace(/[^\x00-\x7F]/g, "")
-    .replace(/[.,;:{}[\]()]/g, "")
+    .replace(/[.,;:{}[\]()?""]/g, "")
     .replace(/\s+/g, "")
     .toLowerCase()
     .trim();
