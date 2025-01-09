@@ -504,7 +504,7 @@ function mili(minute) {
   return 1000 * 60 * minute;
 }
 
-const version = "1.0.1";
+const version = "1.0.2";
 //
 async function checkVersion() {
   let newVersion = getItemWithExpiry("new_version");
@@ -546,7 +546,7 @@ async function start() {
     if (urlBrowser.includes("lms.ictu.edu.vn")) {
       settings = await getFromStorage("settings");
       if (settings && typeof settings === "object") {
-        settings.toggle === 1 ? checkVersion() : null;
+        settings.toggle ? checkVersion() : null;
       }
     }
   }
