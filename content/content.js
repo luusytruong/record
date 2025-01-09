@@ -504,7 +504,7 @@ function mili(minute) {
   return 1000 * 60 * minute;
 }
 
-const version = "1.0.0";
+const version = "1.0.1";
 //
 async function checkVersion() {
   let newVersion = getItemWithExpiry("new_version");
