@@ -76,7 +76,8 @@ const styleE = `
   padding: 4px 12px 4px 4px; 
   border-radius: 50px;
 `;
-let settings = null;
+let settings = {};
+
 //func remove all format
 function cleanString(input) {
   return input
@@ -84,6 +85,14 @@ function cleanString(input) {
     .replace(/[.,;:{}[\]()?""]/g, "")
     .replace(/\s+/g, "")
     .toLowerCase()
+    .trim();
+}
+
+//func clean line break and multiply space
+function cleanHtml(input) {
+  return input
+    .replace(/[\r\n]+/g, " ")
+    .replace(/\s+/g, " ")
     .trim();
 }
 
@@ -195,7 +204,7 @@ async function getQuestion(qi, q, img, objectOption) {
       imgHtml = `<img class="question-image"src="${data.link}">`;
     }
     let optionsHtml = await op();
-    return `
+    return cleanHtml(`
         <div class="question-head">
         <p class="question-label">Question ${qi}</p>
         <p class="question-content">${q.innerText}</p>
@@ -204,7 +213,7 @@ async function getQuestion(qi, q, img, objectOption) {
         <div class="question-body">
         ${optionsHtml}
         </div>
-    `;
+    `);
   } catch (e) {
     alert("get question function: " + e);
   }
@@ -225,7 +234,7 @@ async function load() {
     const questionImg = document.querySelector(
       ".present-single-question__head img"
     );
-    const options = Array.from(
+    let options = Array.from(
       document.querySelectorAll(".present-single-question__body label")
     );
     let objectOption = null;
@@ -274,17 +283,20 @@ let qContent = "";
 async function select() {
   try {
     console.log("%c🔴 debug select", styleE);
-    const dataJson = await getFromStorage("json");
-    const qElem = document.querySelector(".present-single-question__head p");
-    if (qElem && dataJson != null && dataJson.length > 0) {
-      dataSet = new Set(dataJson);
-      qContent = qElem.innerText;
-      console.log(dataSet);
-    } else {
-      console.log(
-        "%cquestion not found or data from storage empty",
-        "color: red"
-      );
+    settings = await getFromStorage("settings");
+    if (settings.mark || settings.auto) {
+      const dataJson = await getFromStorage("json");
+      const qElem = document.querySelector(".present-single-question__head p");
+      if (qElem && dataJson != null && dataJson.length > 0) {
+        dataSet = new Set(dataJson);
+        qContent = qElem.innerText;
+        console.log(dataSet);
+      } else {
+        console.log(
+          "%cquestion not found or data from storage empty",
+          "color: red"
+        );
+      }
     }
     selectID = null;
     selectIDs = [];
@@ -297,20 +309,16 @@ async function select() {
         '.present-single-question__body input[type="checkbox"]'
       );
       ops.forEach((ans, i) => {
-        //check correct
-        if (dataSet != null && dataSet.size > 0 && ans) {
+        if (settings.mark || settings.auto) {
           const answerText = cleanString(qContent + ans.innerText);
           if (dataSet.has(answerText)) {
-            ans.classList.add("hight-light-text");
-            ans.click();
-            console.log("correct: " + answerText);
+            settings.mark ? ans.classList.add("hight-light-text") : null;
+            settings.auto ? ans.click() : null;
+            console.log("correct: " + ans.innerText);
           } else {
-            console.log("wrong: " + answerText);
+            console.log("wrong: " + ans.innerText);
           }
-        } else {
-          console.log("%ccorrect data empty", "color: red");
         }
-        //
         if (checkElems[i]) {
           checkElems[i].addEventListener("change", function () {
             if (this.checked) {
@@ -520,21 +528,27 @@ async function checkVersion() {
   }
 }
 
-if (chrome) {
-  const urlBrowser = window.location.href;
-  if (urlBrowser.includes("lms.ictu.edu.vn")) {
-    checkVersion();
+async function start() {
+  if (chrome) {
+    // chrome.storage.sync.clear(function () {
+    //   console.log("Tất cả dữ liệu đã được xóa khỏi chrome.storage.sync");
+    // });
+    // chrome.storage.local.clear(function () {
+    //   console.log("Tất cả dữ liệu đã được xóa khỏi chrome.storage.local");
+    // });
+    // chrome.storage.sync.get(null, function (data) {
+    //   console.log(data);
+    // });
+    chrome.storage.local.get(null, function (data) {
+      console.log(data);
+    });
+    const urlBrowser = window.location.href;
+    if (urlBrowser.includes("lms.ictu.edu.vn")) {
+      settings = await getFromStorage("settings");
+      if (settings && typeof settings === "object") {
+        settings.toggle === 1 ? checkVersion() : null;
+      }
+    }
   }
-  // chrome.storage.sync.clear(function () {
-  //   console.log("Tất cả dữ liệu đã được xóa khỏi chrome.storage.sync");
-  // });
-  // chrome.storage.local.clear(function () {
-  //   console.log("Tất cả dữ liệu đã được xóa khỏi chrome.storage.local");
-  // });
-  chrome.storage.sync.get(null, function (data) {
-    console.log(data);
-  });
-  chrome.storage.local.get(null, function (data) {
-    console.log(data);
-  });
 }
+start();

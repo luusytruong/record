@@ -82,6 +82,7 @@ if (bS) {
   bS.addEventListener("click", async () => {
     settings = await getFromStorage("settings");
     if (settings) {
+      document.getElementById("toggle").checked = settings.toggle;
       document.getElementById("mark").checked = settings.mark;
       document.getElementById("auto-select").checked = settings.auto;
     }
@@ -93,23 +94,26 @@ if (bS) {
 //btn setting cancel and save setting data
 const settingForm = document.getElementById("setting");
 const bSC = document.getElementById("btn-cancel");
-const iCheckboxs = Array.from(document.querySelectorAll("label.option input"));
+const iCheckboxs = document.querySelectorAll("label.option input");
 if (settingForm && bSC && iCheckboxs.length) {
+  iCheckboxs.forEach((elem) => {
+    elem.addEventListener("change", async () => {
+      const values = Array.from(iCheckboxs).map((elem) => elem.checked);
+      const objSetting = {
+        toggle: values[0],
+        mark: values[1],
+        auto: values[2],
+      };
+      console.log(objSetting);
+      const save = saveToStorage("settings", objSetting);
+      if (save) {
+        toast("Successful", "Settings saved");
+      } else {
+        toast("Error", "Settings not saved");
+      }
+    });
+  });
   bSC.addEventListener("click", async () => {
-    const values = iCheckboxs.map((elem) => elem.checked);
-    const objSetting = {
-      toggle: 1,
-      mark: values[1] ? 1 : 0,
-      auto: values[2] ? 1 : 0,
-    };
-    console.log(objSetting);
-
-    const save = await saveToStorage("settings", objSetting);
-    if (save === true) {
-      toast("Successful", "Settings saved");
-    } else {
-      toast("Error", "Settings not saved");
-    }
     //close form
     settingForm.classList.add("animate");
     setTimeout(() => {
