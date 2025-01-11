@@ -438,31 +438,6 @@ function interval() {
   intervalBtnNext();
 }
 
-const p = document.createElement("p");
-const cssNotify = `
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-
-#important {
-  background: #DD0000;
-  color: #fff;
-  font-size: 14px;
-  font-family: Inter;
-  position: fixed;
-  height: 30px;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  z-index: 1000;
-}
-
-#notice-developer-tools-opened{
-  display: none !important
-}
-`;
-
 function getNewInfo() {
   return new Promise((resolve, reject) => {
     fetch("https://luusytruong.xyz/lms/other/version.php")
@@ -472,59 +447,20 @@ function getNewInfo() {
   });
 }
 
-function setItemWithExpiry(key, value, ttl) {
-  const now = new Date();
-  const item = {
-    value: value,
-    expiry: now.getTime() + ttl,
-  };
-  localStorage.setItem(key, JSON.stringify(item));
-  console.log("save new version");
-}
-
-function getItemWithExpiry(key) {
-  const itemStr = localStorage.getItem(key);
-
-  if (!itemStr) {
-    console.log("item str not exist");
-    return null;
-  }
-  const item = JSON.parse(itemStr);
-  const now = new Date();
-
-  if (now.getTime() > item.expiry) {
-    console.log("expiry !!!!");
-    localStorage.removeItem(key);
-    return null;
-  }
-  return item.value;
-}
-
-function mili(minute) {
-  return 1000 * 60 * minute;
-}
-
-const version = "1.0.2";
+const version = "1.0.3";
 //
 async function checkVersion() {
-  let newVersion = getItemWithExpiry("new_version");
-  if (!newVersion) {
-    console.log("version expiry");
-    const newInfo = await getNewInfo();
-    newVersion = newInfo.version;
-    setItemWithExpiry("new_version", newVersion, mili(60));
-  }
-  if (version === newVersion) {
+  const newInfo = await getNewInfo();
+  if (version === newInfo.version) {
     console.log("version duplicate");
     //start
     appendCSS(css);
     interval();
   } else {
     console.log("version no duplicate");
-    appendCSS(cssNotify);
-    p.id = "important";
-    p.innerText = `New version ${newVersion}, current version ${version}. Please "git pull", and reopen browser.`;
-    document.body.appendChild(p);
+    alert(
+      `Phiên bản mới ${newInfo.version} hãy "git pull", thoát ra và mở lại trình duyệt`
+    );
   }
 }
 

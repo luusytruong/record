@@ -741,7 +741,7 @@ strong {
     object-fit: cover;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
     :root {
         --color-1: #191A21;
         --color-2: #21222C;
@@ -754,4 +754,4 @@ strong {
         --color-8: #FF79C6;
         --text-color: #CCCCCC;
     }
-}
+} */
