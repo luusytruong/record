@@ -641,6 +641,10 @@ strong {
     min-width: 376px;
 }
 
+.question.checked {
+    outline: 2px solid #00BB00;
+}
+
 .question-head {
     margin-bottom: var(--margin-l);
     padding-bottom: var(--padding-s);

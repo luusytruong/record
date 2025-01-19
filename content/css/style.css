@@ -47,6 +47,8 @@ body>p {
 .hight-light-text * {
     color: #343dff !important;
     background-color: transparent !important;
+    font-size: 20px;
+    font-weight: bold;
 }
 
 .ictu-page-test__test-panel__user-info>div>div:first-child {
@@ -57,50 +59,4 @@ body>p {
 .app-version {
     cursor: pointer;
     user-select: none !important;
-}
-
-@keyframes show-copy {
-    0% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
-
-.show-by-syluu {
-    display: flex !important;
-    animation: show-copy 0.4s ease forwards;
-}
-
-#btn-copy svg {
-    width: 14px;
-    aspect-ratio: 1;
-}
-
-#btn-copy {
-    background-color: #FFF;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 8px;
-    border: 0;
-    cursor: pointer;
-    border-radius: 8px;
-    font-size: 12px;
-    color: #DDD;
-    box-shadow: 0 0 12px #00000028;
-    user-select: none !important;
-    position: absolute;
-    z-index: 1000000000;
-    display: none;
-}
-
-#btn-copy:hover {
-    outline: 2px solid #7A6BFF;
-}
-
-#btn-copy:active {
-    background-color: #f7f6ff;
 }

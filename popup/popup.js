@@ -222,7 +222,7 @@ if (bY) {
   bY.addEventListener("click", async () => {
     arr = [];
     await saveToStorage("questions", arr);
-    loading(arr);
+    document.getElementById("question-container").innerHTML = "";
     document.querySelector(".form").classList.add("animate");
     setTimeout(() => {
       document.querySelector(".form").classList.remove("active");
@@ -242,6 +242,10 @@ function display(arr) {
         q.className = "question";
         q.innerHTML = html;
         qC.appendChild(q);
+
+        q.addEventListener("click", () => {
+          q.classList.toggle("checked");
+        });
       }
     });
   }
@@ -293,3 +297,19 @@ const loading = async (arr) => {
 
 //start
 loading(arr);
+
+const infoUrl = `https://raw.githubusercontent.com/luusytruong/record/main/manifest.json`;
+function getInfo() {
+  return new Promise((resolve, reject) => {
+    fetch(infoUrl)
+      .then((response) => response.json())
+      .then((data) => resolve(data))
+      .catch((e) => reject(e));
+  });
+}
+
+async function start() {
+  const info = await getInfo();
+  console.log(info);
+}
+// start();

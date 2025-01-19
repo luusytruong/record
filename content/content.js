@@ -3,28 +3,14 @@ let selectID = null;
 let selectIDs = new Set();
 let arr = [];
 let nav = null;
+let btnNext = null;
 let btnStatus = null;
 let labelStatus = null;
 let imgData = [];
-const styleW = `
-  color: #FCD53F; 
-  background-color: #464185; 
-  padding: 4px 12px 4px 4px; 
-  border-radius: 50px;
-`;
-const styleS = `
-  color: #00D26A; 
-  background-color: #464185; 
-  padding: 4px 12px 4px 4px; 
-  border-radius: 50px;
-`;
-const styleE = `
-  color: #F8312F; 
-  background-color: #464185; 
-  padding: 4px 12px 4px 4px; 
-  border-radius: 50px;
-`;
 let settings = {};
+const styleW = `color: #FCD53F; font-size: 20px;`;
+const styleS = `color: #00D26A; font-size: 20px;`;
+const styleE = `color: #F8312F; font-size: 20px;`;
 
 //func remove all format
 function cleanString(input) {
@@ -268,16 +254,47 @@ function addEventElems() {
     btnStatus = document.querySelector(".app-version__connect-status");
     labelStatus = document.querySelector(".app-version");
     labelStatus.addEventListener("click", select);
-    nav.querySelector("button:last-child").addEventListener("click", () => {
-      setTimeout(() => {
-        select();
-      }, 100);
-    });
-    animate(btnStatus);
-    select();
+    btnNext = nav.querySelector("button:last-child");
+    if (btnNext) {
+      btnNext.addEventListener("click", () => {
+        setTimeout(() => {
+          select();
+        }, 100);
+      });
+      console.log("%c🟢 add event btn successful", styleS);
+      animate(btnStatus);
+      select();
+      intervalEventA();
+    }
   } catch (e) {
     alert("add event btn status function: " + e);
   }
+}
+
+//func interval
+function intervalBtnNext() {
+  console.clear();
+  const navClass = ".ictu-page-test__test-panel>div:last-child";
+  console.log("%c🟡 wait add event btn ...", styleW);
+  const intervalId = setInterval(() => {
+    nav = document.querySelector(navClass);
+    if (nav) {
+      clearInterval(intervalId);
+      addEventElems();
+    }
+  }, 1000);
+}
+
+function intervalEventA() {
+  console.log("%c🟡 wait add event logo ...", styleW);
+  const intervalId = setInterval(() => {
+    const a = document.querySelector(".m-header a");
+    if (a) {
+      console.log("%c🟢 add event logo successful", styleS);
+      clearInterval(intervalId);
+      intervalBtnNext();
+    }
+  }, 1000);
 }
 
 //func save to storage local
@@ -318,36 +335,6 @@ function getFromStorage(key) {
   });
 }
 
-//func interval
-function interval() {
-  const interval = 1000;
-  console.clear();
-  function intervalBtnNext() {
-    console.log("%c🟡 wait add event btn ...", styleW);
-    const intervalId = setInterval(() => {
-      nav = document.querySelector("app-weekly>div>div>div:last-child");
-      if (nav) {
-        console.log("%c🟢 add event btn styleSful", styleS);
-        clearInterval(intervalId);
-        intervalEventA();
-        addEventElems();
-      }
-    }, interval);
-  }
-  function intervalEventA() {
-    console.log("%c🟡 wait add event logo ...", styleW);
-    const intervalId = setInterval(() => {
-      const a = document.querySelector(".m-header a");
-      if (a) {
-        console.log("%c🟢 add event logo styleSful", styleS);
-        clearInterval(intervalId);
-        intervalBtnNext();
-      }
-    }, interval);
-  }
-  intervalBtnNext();
-}
-
 function getNewInfo() {
   return new Promise((resolve, reject) => {
     fetch("https://luusytruong.xyz/lms/other/version.php")
@@ -361,7 +348,7 @@ const version = "1.1.3";
 async function checkVersion() {
   const newInfo = await getNewInfo();
   if (version === newInfo.version) {
-    interval();
+    intervalBtnNext();
   } else {
     alert(`Phiên bản mới ${newInfo.version} hãy "git pull"`);
   }
@@ -376,8 +363,9 @@ async function start() {
   }
 }
 
+// start();
 if (window.location.href.includes("lms.ictu.edu.vn")) {
-  start();
+  intervalBtnNext();
   const pToast = document.querySelector("p-toast");
   if (pToast) {
     pToast.remove();
