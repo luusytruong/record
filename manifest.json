@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Record LMS",
-    "version": "2024.12.07.42",
+    "version": "2024.12.07.43",
     "description": "The extension developed by @syluu records the questions and selected answers during tests on the LMS ICTU.",
     "action": {
         "default_popup": "popup/popup.html",

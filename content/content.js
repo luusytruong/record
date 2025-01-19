@@ -357,7 +357,7 @@ function getNewInfo() {
   });
 }
 
-const version = "1.1.0";
+const version = "1.1.3";
 async function checkVersion() {
   const newInfo = await getNewInfo();
   if (version === newInfo.version) {
