@@ -1,6 +1,53 @@
 let arr = [];
 let settings = [];
-let json = [];
+
+function generateKey(input) {
+  return input
+    .replace(/\*?[A-D]\.\s*/g, "")
+    .replace(/[^\x00-\x7F]/g, "")
+    .replace(/[.,;:{}[\]()?""]/g, "")
+    .replace(/\s+/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+//process input to json
+function processOnlyCorrect(input) {
+  try {
+    let sAnswers = [];
+    let qContent = "";
+    let next = false;
+
+    const lines = input.trim().split("\n");
+    lines.forEach((line) => {
+      if (line.trim() !== "") {
+        console.log(line);
+        if (line.includes("Question")) {
+          next = true;
+        } else if (next === true) {
+          qContent = line;
+          next = false;
+          console.log(qContent);
+        } else if (/\*\s*[A-D]\./.test(line)) {
+          // } else if (line.includes("*")) {
+          sAnswers.push(generateKey(qContent + line));
+        }
+      }
+    });
+    if (sAnswers.length) {
+      const jsonArr = JSON.stringify(sAnswers);
+      console.log(sAnswers);
+      if (saveToStorage("json", sAnswers)) {
+        toast("Successful", "Questions have been uploaded");
+        return;
+      } else {
+        toast("Error", "Non-JSON or Questions");
+      }
+    }
+  } catch (e) {
+    toast("Error", e);
+  }
+}
 
 //func save data to storage
 function saveToStorage(key, data) {
@@ -71,7 +118,12 @@ if (bU) {
       }
     } catch (e) {
       console.log("%cError: " + e.message, "color: red;");
-      toast("Error", e.message);
+      // toast("Error", e.message);
+      processOnlyCorrect(copyText);
+    } finally {
+      chrome.storage.local.get(null, (data) => {
+        console.log(data);
+      });
     }
   });
 }
@@ -93,9 +145,8 @@ if (bS) {
 
 //btn setting cancel and save setting data
 const settingForm = document.getElementById("setting");
-const bSC = document.getElementById("btn-cancel");
 const iCheckboxs = document.querySelectorAll("label.option input");
-if (settingForm && bSC && iCheckboxs.length) {
+if (settingForm && iCheckboxs.length) {
   iCheckboxs.forEach((elem) => {
     elem.addEventListener("change", async () => {
       const values = Array.from(iCheckboxs).map((elem) => elem.checked);
@@ -104,7 +155,6 @@ if (settingForm && bSC && iCheckboxs.length) {
         mark: values[1],
         auto: values[2],
       };
-      console.log(objSetting);
       const save = saveToStorage("settings", objSetting);
       if (save) {
         toast("Successful", "Settings saved");
@@ -113,12 +163,14 @@ if (settingForm && bSC && iCheckboxs.length) {
       }
     });
   });
-  bSC.addEventListener("click", async () => {
-    //close form
-    settingForm.classList.add("animate");
-    setTimeout(() => {
-      settingForm.className = "";
-    }, 500);
+  //close form
+  settingForm.addEventListener("click", function (e) {
+    if (e.target === this) {
+      this.classList.add("animate");
+      setTimeout(() => {
+        this.className = "";
+      }, 500);
+    }
   });
 }
 
@@ -127,6 +179,12 @@ const bE = document.getElementById("btn-expand");
 if (bE) {
   bE.addEventListener("click", () => {
     chrome.runtime.openOptionsPage();
+    // const url = chrome.runtime.getURL("popup/popup.html");
+    // chrome.windows.create({
+    //   url: url,
+    //   type: "popup",
+    //   state: "maximized",
+    // });
   });
 }
 

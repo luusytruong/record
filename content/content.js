@@ -1,58 +1,6 @@
-const css = `
-* {
-    user-select: text !important;
-    -moz-user-select: text !important;
-    -webkit-user-select: text !important;
-}
-body > p {
-    display:none !important;
-}
-::selection {
-    background-color: #1D4ED8;
-    background-color: #2563EB;
-    background-color: #3B82F6;
-    background-color: #FF4500;
-    background-color: #05C30C;
-    background-color: #7A6BFF;
-    color: #F5F5F5;
-}
-@keyframes animate {
-    0% {
-        background-color: #3B82F6;
-        box-shadow: 0 0 3px 2px #3B82F6;
-    }
-    40% {
-        background-color: #05C30C;
-        box-shadow: 0 0 3px 2px #05C30C;
-    }
-    60% {
-        background-color: #3B82F6;
-        box-shadow: 0 0 3px 2px #3B82F6;
-    }
-    100% {
-        background-color: #05C30C;
-        box-shadow: 0 0 3px 2px #05C30C;
-    }
-}
-.animate {
-    animation: animate 0.4s ease !important;
-}
-.hight-light-text * {
-    color: #343dff !important;
-    background-color: transparent !important;
-}
-.ictu-page-test__test-panel__user-info>div>div:first-child {
-    padding: 1px;
-    border-radius: 50%;
-}
-.app-version{
-    cursor: pointer;
-    user-select: none !important;
-}
-`;
 const lba = ["A.", "B.", "C.", "D."];
 let selectID = null;
-let selectIDs = [];
+let selectIDs = new Set();
 let arr = [];
 let nav = null;
 let btnStatus = null;
@@ -106,9 +54,9 @@ function appendCSS(style) {
 
 //function animation
 function animate(elem) {
-  elem.classList.add("animate");
+  elem.classList.add("animation-by-syluu");
   setTimeout(() => {
-    elem.classList.remove("animate");
+    elem.classList.remove("animation-by-syluu");
   }, 400);
 }
 
@@ -125,7 +73,7 @@ async function upload(blobUrl) {
     }
     const blob = await response.blob();
     const formData = new FormData();
-    console.log(imgData);
+    // console.log(imgData);
     formData.append("file", blob);
 
     const uploadResponse = await fetch(
@@ -143,10 +91,10 @@ async function upload(blobUrl) {
       name: fileName,
       link: data.link,
     });
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (e) {
-    console.log("upload function: " + e);
+    // console.log("upload function: " + e);
     return {
       link: "../images/error_img.png",
     };
@@ -154,11 +102,11 @@ async function upload(blobUrl) {
 }
 
 //func create question html
-async function getQuestion(qi, q, img, objectOption) {
+async function getQuestion(qID, qText, qImg, objOptions) {
   try {
     async function op() {
-      const dataOj = objectOption.data;
-      console.log("==============================================");
+      const dataOj = objOptions.data;
+      // console.log("\n\n");
       return Promise.all(
         dataOj.map(async (option, i) => {
           let isCorrect = null;
@@ -168,15 +116,15 @@ async function getQuestion(qi, q, img, objectOption) {
             isCorrect = selectIDs.includes(i);
           }
           let optionImg;
-          if (objectOption.key !== "text") {
+          if (objOptions.key !== "text") {
             optionImg = await upload(option.src);
           }
-          console.log(
-            `%c${lba[i]} ${option.innerText}`,
-            `color: ${isCorrect ? "#00EE00" : ""};`
-          );
+          // console.log(
+          //   `%c${lba[i]} ${option.innerText}`,
+          //   `color: ${isCorrect ? "#00EE00" : ""};`
+          // );
           const optionHtml =
-            objectOption.key === "text"
+            objOptions.key === "text"
               ? `
             <div class="${isCorrect ? "answer choose" : "answer"}">
             <p>${isCorrect ? "*" : ""}${
@@ -199,15 +147,15 @@ async function getQuestion(qi, q, img, objectOption) {
       ).then((htmlArray) => htmlArray.join(""));
     }
     let imgHtml = "";
-    if (img) {
-      const data = await upload(img.src);
+    if (qImg) {
+      const data = await upload(qImg.src);
       imgHtml = `<img class="question-image"src="${data.link}">`;
     }
     let optionsHtml = await op();
     return cleanHtml(`
         <div class="question-head">
-        <p class="question-label">Question ${qi}</p>
-        <p class="question-content">${q.innerText}</p>
+        <p class="question-label">Question ${qID}</p>
+        <p class="question-content">${qText.innerText}</p>
         ${imgHtml}
         </div>
         <div class="question-body">
@@ -222,47 +170,33 @@ async function getQuestion(qi, q, img, objectOption) {
 //func load question in html
 async function load() {
   try {
-    const questionNum = parseInt(
+    const qID = parseInt(
       document
         .querySelector(".present-single-question__head legend")
         .innerText.replaceAll("Câu ", "")
         .replaceAll(":", "")
     );
-    const questionContent = document.querySelector(
-      ".present-single-question__head p"
-    );
-    const questionImg = document.querySelector(
-      ".present-single-question__head img"
-    );
+    const qText = document.querySelector(".present-single-question__head p");
+    const qImg = document.querySelector(".present-single-question__head img");
     let options = Array.from(
       document.querySelectorAll(".present-single-question__body label")
     );
-    let objectOption = null;
-    if (questionContent) {
+    let objOptions = null;
+    if (qText) {
       for (const option of options) {
         if (option.innerText !== "") {
-          objectOption = { key: "text", data: options };
-          arr[questionNum - 1] = await getQuestion(
-            questionNum,
-            questionContent,
-            questionImg,
-            objectOption
-          );
+          objOptions = { key: "text", data: options };
+          arr[qID - 1] = await getQuestion(qID, qText, qImg, objOptions);
           break;
         } else {
           options = Array.from(
             document.querySelectorAll(".present-single-question__body img")
           );
           if (options.length) {
-            objectOption = { key: "img", data: options };
-            arr[questionNum - 1] = await getQuestion(
-              questionNum,
-              questionContent,
-              questionImg,
-              objectOption
-            );
+            objOptions = { key: "img", data: options };
+            arr[qID - 1] = await getQuestion(qID, qText, qImg, objOptions);
           } else {
-            alert("Không phải chữ hoặc ảnh");
+            alert("Không phải chữ và ảnh");
           }
           break;
         }
@@ -290,16 +224,10 @@ async function select() {
       if (qElem && dataJson != null && dataJson.length > 0) {
         dataSet = new Set(dataJson);
         qContent = qElem.innerText;
-        console.log(dataSet);
-      } else {
-        console.log(
-          "%cquestion not found or data from storage empty",
-          "color: red"
-        );
       }
     }
     selectID = null;
-    selectIDs = [];
+    selectIDs.clear();
     const ops = document.querySelectorAll(
       ".present-single-question__body label"
     );
@@ -309,33 +237,22 @@ async function select() {
         '.present-single-question__body input[type="checkbox"]'
       );
       ops.forEach((ans, i) => {
-        if (settings.mark || settings.auto) {
+        if ((dataSet && settings.mark) || settings.auto) {
           const answerText = cleanString(qContent + ans.innerText);
           if (dataSet.has(answerText)) {
             settings.mark ? ans.classList.add("hight-light-text") : null;
             settings.auto ? ans.click() : null;
-            console.log("correct: " + ans.innerText);
-          } else {
-            console.log("wrong: " + ans.innerText);
           }
         }
         if (checkElems[i]) {
           checkElems[i].addEventListener("change", function () {
-            if (this.checked) {
-              if (!selectIDs.includes(i)) {
-                selectIDs.push(i);
-              }
-            } else {
-              selectIDs = selectIDs.filter((index) => index !== i);
-            }
+            this.checked ? selectIDs.add(i) : selectIDs.delete(i);
             load();
           });
         } else {
           ans.addEventListener("click", () => {
             selectID = i;
-            if (selectID !== null) {
-              load();
-            }
+            selectID !== null ? load() : null;
           });
         }
       });
@@ -345,22 +262,17 @@ async function select() {
   }
 }
 
-//func create btn
-function addEventBtnStatus() {
+//func add event btn
+function addEventElems() {
   try {
     btnStatus = document.querySelector(".app-version__connect-status");
     labelStatus = document.querySelector(".app-version");
-    //listener e click btn
-    labelStatus.addEventListener("click", () => {
-      select();
-    });
-    //listener e click btn
-    nav.querySelector("button").addEventListener("click", () => {
+    labelStatus.addEventListener("click", select);
+    nav.querySelector("button:last-child").addEventListener("click", () => {
       setTimeout(() => {
         select();
       }, 100);
     });
-    //call
     animate(btnStatus);
     select();
   } catch (e) {
@@ -413,13 +325,12 @@ function interval() {
   function intervalBtnNext() {
     console.log("%c🟡 wait add event btn ...", styleW);
     const intervalId = setInterval(() => {
-      nav = document.querySelector(".ictu-page-test__test-panel__single-nav");
+      nav = document.querySelector("app-weekly>div>div>div:last-child");
       if (nav) {
         console.log("%c🟢 add event btn styleSful", styleS);
-        //call
         clearInterval(intervalId);
         intervalEventA();
-        addEventBtnStatus();
+        addEventElems();
       }
     }, interval);
   }
@@ -429,7 +340,6 @@ function interval() {
       const a = document.querySelector(".m-header a");
       if (a) {
         console.log("%c🟢 add event logo styleSful", styleS);
-        //call
         clearInterval(intervalId);
         intervalBtnNext();
       }
@@ -447,44 +357,29 @@ function getNewInfo() {
   });
 }
 
-const version = "1.0.3";
-//
+const version = "1.1.0";
 async function checkVersion() {
   const newInfo = await getNewInfo();
   if (version === newInfo.version) {
-    console.log("version duplicate");
-    //start
-    appendCSS(css);
     interval();
   } else {
-    console.log("version no duplicate");
-    alert(
-      `Phiên bản mới ${newInfo.version} hãy "git pull", thoát ra và mở lại trình duyệt`
-    );
+    alert(`Phiên bản mới ${newInfo.version} hãy "git pull"`);
   }
 }
 
 async function start() {
   if (chrome) {
-    // chrome.storage.sync.clear(function () {
-    //   console.log("Tất cả dữ liệu đã được xóa khỏi chrome.storage.sync");
-    // });
-    // chrome.storage.local.clear(function () {
-    //   console.log("Tất cả dữ liệu đã được xóa khỏi chrome.storage.local");
-    // });
-    // chrome.storage.sync.get(null, function (data) {
-    //   console.log(data);
-    // });
-    chrome.storage.local.get(null, function (data) {
-      console.log(data);
-    });
-    const urlBrowser = window.location.href;
-    if (urlBrowser.includes("lms.ictu.edu.vn")) {
-      settings = await getFromStorage("settings");
-      if (settings && typeof settings === "object") {
-        settings.toggle ? checkVersion() : null;
-      }
+    settings = await getFromStorage("settings");
+    if (settings && typeof settings === "object") {
+      settings.toggle ? checkVersion() : null;
     }
   }
 }
+
 start();
+if (window.location.href.includes("lms.ictu.edu.vn")) {
+  const pToast = document.querySelector("p-toast");
+  if (pToast) {
+    pToast.remove();
+  }
+}

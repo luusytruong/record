@@ -1,0 +1,106 @@
+* {
+    user-select: text !important;
+    -moz-user-select: text !important;
+    -webkit-user-select: text !important;
+}
+
+body>p {
+    display: none !important;
+}
+
+::selection {
+    background-color: #1D4ED8;
+    background-color: #2563EB;
+    background-color: #3B82F6;
+    background-color: #FF4500;
+    background-color: #05C30C;
+    background-color: #7A6BFF;
+    color: #F5F5F5;
+}
+
+@keyframes animate {
+    0% {
+        background-color: #3B82F6;
+        box-shadow: 0 0 3px 2px #3B82F6;
+    }
+
+    40% {
+        background-color: #05C30C;
+        box-shadow: 0 0 3px 2px #05C30C;
+    }
+
+    60% {
+        background-color: #3B82F6;
+        box-shadow: 0 0 3px 2px #3B82F6;
+    }
+
+    100% {
+        background-color: #05C30C;
+        box-shadow: 0 0 3px 2px #05C30C;
+    }
+}
+
+.animation-by-syluu {
+    animation: animate 0.4s ease !important;
+}
+
+.hight-light-text * {
+    color: #343dff !important;
+    background-color: transparent !important;
+}
+
+.ictu-page-test__test-panel__user-info>div>div:first-child {
+    padding: 1px;
+    border-radius: 50%;
+}
+
+.app-version {
+    cursor: pointer;
+    user-select: none !important;
+}
+
+@keyframes show-copy {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.show-by-syluu {
+    display: flex !important;
+    animation: show-copy 0.4s ease forwards;
+}
+
+#btn-copy svg {
+    width: 14px;
+    aspect-ratio: 1;
+}
+
+#btn-copy {
+    background-color: #FFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    border: 0;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #DDD;
+    box-shadow: 0 0 12px #00000028;
+    user-select: none !important;
+    position: absolute;
+    z-index: 1000000000;
+    display: none;
+}
+
+#btn-copy:hover {
+    outline: 2px solid #7A6BFF;
+}
+
+#btn-copy:active {
+    background-color: #f7f6ff;
+}

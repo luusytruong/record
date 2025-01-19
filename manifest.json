@@ -1,15 +1,15 @@
 {
     "manifest_version": 3,
     "name": "Record LMS",
-    "version": "2024.12.25",
+    "version": "2024.12.07.40",
     "description": "The extension developed by @syluu records the questions and selected answers during tests on the LMS ICTU.",
     "action": {
         "default_popup": "popup/popup.html",
         "default_icon": {
-            "16": "icons/icon16.png",
-            "32": "icons/icon32.png",
-            "64": "icons/icon64.png",
-            "128": "icons/icon128.png"
+            "16": "assets/icons/icon16.png",
+            "32": "assets/icons/icon32.png",
+            "64": "assets/icons/icon64.png",
+            "128": "assets/icons/icon128.png"
         }
     },
     "options_page": "popup/popup.html",
@@ -19,7 +19,8 @@
         "scripting",
         "storage",
         "clipboardWrite",
-        "clipboardRead"
+        "clipboardRead",
+        "background"
     ],
     "content_scripts": [
         {
@@ -27,14 +28,18 @@
                 "<all_urls>"
             ],
             "js": [
-                "content/content.js"
+                "content/content.js",
+                "content/copy.js"
+            ],
+            "css": [
+                "content/css/style.css"
             ]
         }
     ],
     "icons": {
-        "16": "icons/icon16.png",
-        "32": "icons/icon32.png",
-        "64": "icons/icon64.png",
-        "128": "icons/icon128.png"
+        "16": "assets/icons/icon16.png",
+        "32": "assets/icons/icon32.png",
+        "64": "assets/icons/icon64.png",
+        "128": "assets/icons/icon128.png"
     }
 }
