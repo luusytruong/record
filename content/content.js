@@ -376,8 +376,8 @@ async function start() {
   }
 }
 
-start();
 if (window.location.href.includes("lms.ictu.edu.vn")) {
+  start();
   const pToast = document.querySelector("p-toast");
   if (pToast) {
     pToast.remove();
