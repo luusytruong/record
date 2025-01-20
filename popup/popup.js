@@ -243,15 +243,20 @@ function display(arr) {
         q.innerHTML = html;
         qC.appendChild(q);
 
-        q.addEventListener("click", () => {
-          q.classList.toggle("checked");
+        q.addEventListener("mousedown", (e) => {
+          if (e.button == 2) {
+            q.classList.remove("checked");
+            q.classList.toggle("waiting");
+          } else {
+            q.classList.remove("waiting");
+            q.classList.toggle("checked");
+          }
         });
       }
     });
   }
   toast("Successful", "All question have been loaded");
 }
-
 //toast
 let timeoutId;
 function toast(status, content) {
@@ -298,18 +303,6 @@ const loading = async (arr) => {
 //start
 loading(arr);
 
-const infoUrl = `https://raw.githubusercontent.com/luusytruong/record/main/manifest.json`;
-function getInfo() {
-  return new Promise((resolve, reject) => {
-    fetch(infoUrl)
-      .then((response) => response.json())
-      .then((data) => resolve(data))
-      .catch((e) => reject(e));
-  });
-}
-
-async function start() {
-  const info = await getInfo();
-  console.log(info);
-}
-// start();
+window.oncontextmenu = () => {
+  return false;
+};

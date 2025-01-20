@@ -99,7 +99,7 @@ async function getQuestion(qID, qText, qImg, objOptions) {
           if (selectID !== null) {
             isCorrect = i === selectID;
           } else {
-            isCorrect = selectIDs.includes(i);
+            isCorrect = selectIDs.has(i);
           }
           let optionImg;
           if (objOptions.key !== "text") {
@@ -335,22 +335,31 @@ function getFromStorage(key) {
   });
 }
 
+const infoUrl = `https://raw.githubusercontent.com/luusytruong/record/main/version.json`;
+const infoUrl2 = "http://127.0.0.1:5500/version.json";
 function getNewInfo() {
   return new Promise((resolve, reject) => {
-    fetch("https://luusytruong.xyz/lms/other/version.php")
+    fetch(infoUrl)
       .then((response) => response.json())
       .then((data) => resolve(data))
       .catch((e) => reject(e));
   });
 }
 
-const version = "1.1.3";
-async function checkVersion() {
-  const newInfo = await getNewInfo();
-  if (version === newInfo.version) {
+const version = "1.1.4";
+async function checkUpdate() {
+  try {
     intervalBtnNext();
-  } else {
-    alert(`Phiên bản mới ${newInfo.version} hãy "git pull"`);
+    const info = await getNewInfo();
+    if (info.update && info.version) {
+      if (info.version !== version) {
+        alert(`Extension có phiên bản mới ${info.version} 🥰`);
+      }
+    }
+  } catch (e) {
+    intervalBtnNext();
+    console.error(e);
+    alert("Có lỗi khi kiểm tra phiên bản, thử lại sau!");
   }
 }
 
@@ -358,14 +367,14 @@ async function start() {
   if (chrome) {
     settings = await getFromStorage("settings");
     if (settings && typeof settings === "object") {
-      settings.toggle ? checkVersion() : null;
+      settings.toggle ? checkUpdate() : null;
     }
   }
 }
 
-// start();
 if (window.location.href.includes("lms.ictu.edu.vn")) {
-  intervalBtnNext();
+  start();
+
   const pToast = document.querySelector("p-toast");
   if (pToast) {
     pToast.remove();

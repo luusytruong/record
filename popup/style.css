@@ -643,6 +643,32 @@ strong {
 
 .question.checked {
     outline: 2px solid #00BB00;
+    background-color: #E2F1E5;
+
+    .question-head::before {
+        border-color: #00BB00;
+    }
+
+    .question-head::after {
+        background-color: #E2F1E5;
+    }
+}
+
+.question.waiting {
+    outline: 2px solid #F8312F;
+    background-color: #F4E7E8;
+
+    .question-head::before {
+        border-color: #F8312F;
+    }
+
+    .question-head::after {
+        background-color: #F4E7E8;
+    }
+
+    .answer.choose p {
+        color: #F8312F;
+    }
 }
 
 .question-head {
@@ -699,7 +725,7 @@ strong {
     overflow: hidden;
 }
 
-.answer p,
+/* .answer p,
 .question-content {
     display: -webkit-box;
     line-clamp: 1;
@@ -707,7 +733,7 @@ strong {
     -webkit-box-orient: vertical;
     text-overflow: ellipsis;
     overflow: hidden;
-}
+} */
 
 .answer.choose p {
     font-weight: bold;
