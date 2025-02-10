@@ -346,7 +346,7 @@ function getNewInfo() {
   });
 }
 
-const version = "1.1.4";
+const version = "1.1.5";
 async function checkUpdate() {
   try {
     intervalBtnNext();
