@@ -8,9 +8,9 @@ let btnStatus = null;
 let labelStatus = null;
 let imgData = [];
 let settings = {};
-const styleW = `color: #FCD53F; font-size: 20px;`;
-const styleS = `color: #00D26A; font-size: 20px;`;
-const styleE = `color: #F8312F; font-size: 20px;`;
+const styleW = `color: #FCD53F; font-size: 24px;`;
+const styleS = `color: #00D26A; font-size: 24px;`;
+const styleE = `color: #F8312F; font-size: 24px;`;
 
 //func remove all format
 function cleanString(input) {
@@ -251,9 +251,6 @@ async function select() {
 //func add event btn
 function addEventElems() {
   try {
-    btnStatus = document.querySelector(".app-version__connect-status");
-    labelStatus = document.querySelector(".app-version");
-    labelStatus.addEventListener("click", select);
     btnNext = nav.querySelector("button:last-child");
     if (btnNext) {
       btnNext.addEventListener("click", () => {
@@ -346,14 +343,14 @@ function getNewInfo() {
   });
 }
 
-const version = "1.1.5";
+const version = "1.1.6";
 async function checkUpdate() {
   try {
     intervalBtnNext();
     const info = await getNewInfo();
     if (info.update && info.version) {
       if (info.version !== version) {
-        alert(`Extension có phiên bản mới ${info.version} 🥰`);
+        alert(`Extension có phiên bản mới ${info.version}, cập nhật và reload 🥰`);
       }
     }
   } catch (e) {
@@ -373,6 +370,9 @@ async function start() {
 }
 
 if (window.location.href.includes("lms.ictu.edu.vn")) {
+  btnStatus = document.querySelector(".app-version__connect-status");
+  labelStatus = document.querySelector(".app-version");
+  labelStatus.addEventListener("click", select);
   start();
 
   const pToast = document.querySelector("p-toast");
@@ -380,3 +380,23 @@ if (window.location.href.includes("lms.ictu.edu.vn")) {
     pToast.remove();
   }
 }
+const checkData = new Set();
+const clickData = [];
+document.addEventListener("click", (e) => {
+  const tagElem = e.target.tagName ? e.target.tagName : null;
+  const idElem = e.target.id ? e.target.id : null;
+  const classElem = e.target.className ? e.target.className : null;
+  const textElem = e.target.innerText ? e.target.innerText : null;
+  const keyElem = cleanString(tagElem + idElem + classElem + textElem);
+  if (checkData.has(keyElem)) return;
+  const elemObj = {
+    tag: tagElem,
+    id: idElem,
+    class: classElem,
+    text: textElem,
+    html: e.target.innerHTML,
+  };
+  checkData.add(keyElem);
+  clickData.push(elemObj);
+  console.log(clickData);
+});
