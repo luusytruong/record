@@ -263,6 +263,14 @@ function addEventElems() {
       select();
       intervalEventA();
     }
+    const btnNextSkill = nav.querySelector("button:last-child > span");
+    if (btnNextSkill) {
+      btnNextSkill.addEventListener("click", () => {
+        setTimeout(() => {
+          select();
+        }, 100);
+      });
+    }
   } catch (e) {
     alert("add event btn status function: " + e);
   }
@@ -343,14 +351,16 @@ function getNewInfo() {
   });
 }
 
-const version = "1.1.6";
+const version = "1.1.7";
 async function checkUpdate() {
   try {
     intervalBtnNext();
     const info = await getNewInfo();
     if (info.update && info.version) {
       if (info.version !== version) {
-        alert(`Extension có phiên bản mới ${info.version}, cập nhật và reload 🥰`);
+        alert(
+          `Extension có phiên bản mới ${info.version}, cập nhật và reload 🥰`
+        );
       }
     }
   } catch (e) {
