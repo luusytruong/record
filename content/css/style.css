@@ -4,7 +4,7 @@
     -webkit-user-select: text !important;
 }
 
-body>p {
+#notice-developer-tools-opened {
     display: none !important;
 }
 
