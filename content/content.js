@@ -16,8 +16,7 @@ const styleE = `color: #F8312F; font-size: 24px;`;
 function cleanString(input) {
   return input
     .replace(/[^\x00-\x7F]/g, "")
-    .replace(/[.,;:{}[\]()?""]/g, "")
-    .replace(/\s+/g, "")
+    .replace(/[^a-zA-Z0-9]/g, "")
     .toLowerCase()
     .trim();
 }
@@ -141,7 +140,9 @@ async function getQuestion(qID, qText, qImg, objOptions) {
     return cleanHtml(`
         <div class="question-head">
         <p class="question-label">Question ${qID}</p>
-        <p class="question-content">${qText.innerText}</p>
+        <p class="question-content">${qText.innerText
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")}</p>
         ${imgHtml}
         </div>
         <div class="question-body">
@@ -210,6 +211,7 @@ async function select() {
       if (qElem && dataJson != null && dataJson.length > 0) {
         dataSet = new Set(dataJson);
         qContent = qElem.innerText;
+        console.log(dataSet);
       }
     }
     selectID = null;
@@ -225,6 +227,7 @@ async function select() {
       ops.forEach((ans, i) => {
         if ((dataSet && settings.mark) || settings.auto) {
           const answerText = cleanString(qContent + ans.innerText);
+          console.log(answerText);
           if (dataSet.has(answerText)) {
             settings.mark ? ans.classList.add("hight-light-text") : null;
             settings.auto ? ans.click() : null;
@@ -351,7 +354,7 @@ function getNewInfo() {
   });
 }
 
-const version = "1.1.7";
+const version = "1.1.8";
 async function checkUpdate() {
   try {
     intervalBtnNext();
@@ -380,11 +383,10 @@ async function start() {
 }
 
 if (window.location.href.includes("lms.ictu.edu.vn")) {
+  start();
   btnStatus = document.querySelector(".app-version__connect-status");
   labelStatus = document.querySelector(".app-version");
   labelStatus.addEventListener("click", select);
-  start();
-
   const pToast = document.querySelector("p-toast");
   if (pToast) {
     pToast.remove();
@@ -408,5 +410,5 @@ document.addEventListener("click", (e) => {
   };
   checkData.add(keyElem);
   clickData.push(elemObj);
-  console.log(clickData);
+  // console.log(clickData);
 });

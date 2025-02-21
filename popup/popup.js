@@ -5,8 +5,7 @@ function generateKey(input) {
   return input
     .replace(/\*?[A-D]\.\s*/g, "")
     .replace(/[^\x00-\x7F]/g, "")
-    .replace(/[.,;:{}[\]()?""]/g, "")
-    .replace(/\s+/g, "")
+    .replace(/[^a-zA-Z0-9]/g, "")
     .toLowerCase()
     .trim();
 }
@@ -21,15 +20,13 @@ function processOnlyCorrect(input) {
     const lines = input.trim().split("\n");
     lines.forEach((line) => {
       if (line.trim() !== "") {
-        console.log(line);
         if (line.includes("Question")) {
           next = true;
         } else if (next === true) {
           qContent = line;
           next = false;
-          console.log(qContent);
-        } else if (/\*\s*[A-D]\./.test(line)) {
-          // } else if (line.includes("*")) {
+        } else if (/\*[A-D]\.\s*/g.test(line)) {
+          console.log(generateKey(qContent + line));
           sAnswers.push(generateKey(qContent + line));
         }
       }
@@ -39,10 +36,11 @@ function processOnlyCorrect(input) {
       console.log(sAnswers);
       if (saveToStorage("json", sAnswers)) {
         toast("Successful", "Questions have been uploaded");
-        return;
       } else {
-        toast("Error", "Non-JSON or Questions");
+        toast("Error", "Failed to upload");
       }
+    } else {
+      toast("Error", "Non-JSON or Questions");
     }
   } catch (e) {
     toast("Error", e);
