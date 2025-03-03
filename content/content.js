@@ -62,7 +62,7 @@ async function upload(blobUrl) {
     formData.append("file", blob);
 
     const uploadResponse = await fetch(
-      "https://luusytruong.xyz/lms/api/temp.php",
+      "https://luusytruong.id.vn/lms/api/temp.php",
       {
         method: "POST",
         body: formData,
@@ -150,7 +150,7 @@ async function getQuestion(qID, qText, qImg, objOptions) {
         </div>
     `);
   } catch (e) {
-    alert("get question function: " + e);
+    console.error("get question function: " + e);
   }
 }
 
@@ -183,7 +183,7 @@ async function load() {
             objOptions = { key: "img", data: options };
             arr[qID - 1] = await getQuestion(qID, qText, qImg, objOptions);
           } else {
-            alert("Không phải chữ và ảnh");
+            console.error("Không phải chữ và ảnh");
           }
           break;
         }
@@ -191,10 +191,10 @@ async function load() {
       saveToStorage("questions", arr);
       animate(btnStatus);
     } else {
-      alert("câu này bị lỗi, dùng CTRL + S để lưu lại rồi gửi cho tao");
+      console.error("câu này bị lỗi, dùng CTRL + S để lưu lại rồi gửi cho tao");
     }
   } catch (e) {
-    alert("load to save function: " + e.message);
+    console.error("load to save function: " + e.message);
   }
 }
 
@@ -247,7 +247,7 @@ async function select() {
       });
     }
   } catch (e) {
-    alert("select function: " + e.message);
+    console.error("select function: " + e.message);
   }
 }
 
@@ -266,16 +266,18 @@ function addEventElems() {
       select();
       intervalEventA();
     }
-    const btnNextSkill = nav.querySelector("button:last-child > span");
-    if (btnNextSkill) {
-      btnNextSkill.addEventListener("click", () => {
-        setTimeout(() => {
-          select();
-        }, 100);
+    const btnNextSkills = nav.querySelectorAll("button");
+    if (btnNextSkills.length) {
+      btnNextSkills.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          setTimeout(() => {
+            select();
+          }, 100);
+        });
       });
     }
   } catch (e) {
-    alert("add event btn status function: " + e);
+    console.error("add event btn status function: " + e);
   }
 }
 
@@ -311,10 +313,10 @@ function saveToStorage(name, data) {
     if (chrome && chrome.storage) {
       chrome.storage.local.set({ [name]: data });
     } else {
-      alert("Error: Chrome not exist");
+      console.error("Error: Chrome not exist");
     }
   } catch (e) {
-    alert("save function: " + e.message);
+    console.error("save function: " + e.message);
   }
 }
 
@@ -361,7 +363,7 @@ async function checkUpdate() {
     const info = await getNewInfo();
     if (info.update && info.version) {
       if (info.version !== version) {
-        alert(
+        console.error(
           `Extension có phiên bản mới ${info.version}, cập nhật và reload 🥰`
         );
       }
@@ -369,7 +371,7 @@ async function checkUpdate() {
   } catch (e) {
     intervalBtnNext();
     console.error(e);
-    alert("Có lỗi khi kiểm tra phiên bản, thử lại sau!");
+    console.error("Có lỗi khi kiểm tra phiên bản, thử lại sau!");
   }
 }
 
