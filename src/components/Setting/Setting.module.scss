@@ -1,0 +1,38 @@
+.option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  cursor: pointer;
+}
+.option input {
+  appearance: none;
+  width: 0;
+}
+.option input:checked + .slider {
+  background-color: var(--primary);
+  &::before {
+    transform: translateX(16px);
+  }
+}
+.slider {
+  position: relative;
+  background-color: #aaa;
+  height: 20px;
+  width: 36px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+}
+
+.slider::before {
+  border-radius: 50%;
+  content: "";
+  position: absolute;
+  background-color: var(--elem);
+  height: 20px;
+  aspect-ratio: 1;
+  transition: transform 0.3s ease;
+}
