@@ -44,11 +44,9 @@
     animation: animate 0.4s ease !important;
 }
 
-.hight-light-text * {
+.selected-hehe * {
     color: #343dff !important;
     background-color: transparent !important;
-    /* font-size: 20px !important;
-    font-weight: bold !important; */
 }
 
 .ictu-page-test__test-panel__user-info>div>div:first-child {
@@ -59,4 +57,8 @@
 .app-version {
     cursor: pointer;
     user-select: none !important;
+}
+
+[role="alert"] {
+    display: none !important;
 }
