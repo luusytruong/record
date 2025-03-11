@@ -1,0 +1,8 @@
+.overlay {
+  position: fixed;
+  background-color: #00000033;
+  backdrop-filter: blur(4px);
+  inset: 0;
+  z-index: 998;
+  display: flex;
+}

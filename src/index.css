@@ -1,0 +1,122 @@
+@font-face {
+  font-family: 'SVN Poppins';
+  src: url('./assets/fonts/SVN-Poppins.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --background: #f3f5f6;
+  --color: #213547;
+  --elem: #fff;
+  --border: #d3d5d6;
+
+  --primary: #00AA00;
+  --primary-hover: #009900;
+
+  --shadow: 0 0 12px #0000001a;
+  --shadow-1: -1px 1px 8px rgba(0, 0, 0, 0.08);
+  --shadow-2: -2px 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+* {
+  transition: all 0.24s, width 1s, margin 0s, outline 0s, font-size 0s;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  font-family: 'SVN Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  box-sizing: border-box;
+  font-size: 13px;
+  background-color: var(--background);
+  height: 100vh;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+a {
+  color: unset;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  border: 0;
+}
+
+#root {
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  min-width: 400px;
+  min-height: 400px;
+  width: 100%;
+}
+
+.show-opacity {
+  animation: opacity 0.32s;
+}
+
+.hide-opacity {
+  animation: opacity 0.32s reverse;
+}
+
+.show-tranform {
+  animation: tranform 0.32s;
+}
+
+.hide-tranform {
+  animation: tranform 0.32s reverse;
+}
+
+.show-mixed {
+  animation: opacity 0.4s, tranform 0.4s;
+}
+
+.hide-mixed {
+  animation: opacity 0.32s reverse, tranform 0.4s reverse;
+}
+
+@keyframes opacity {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes tranform {
+  from {
+    transform: translateY(100px);
+  }
+
+  to {
+    transform: translateY(0px);
+  }
+}

@@ -1,0 +1,17 @@
+.wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.inner {
+  padding: 0 12px 12px 12px;
+  flex: 1 0 100%;
+}
+.outlet-container > div {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
