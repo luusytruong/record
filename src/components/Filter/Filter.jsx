@@ -28,7 +28,7 @@ function Filter() {
   };
 
   return (
-    <Wrapper title={"Bộ lọc"} styles={{ width: "340px", aspectRatio: "1" }}>
+    <Wrapper title={"Bộ lọc"} styles={{ width: "320px", aspectRatio: "1" }}>
       <textarea
         ref={ref}
         className={cx("text")}

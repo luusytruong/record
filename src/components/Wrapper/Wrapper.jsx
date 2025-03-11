@@ -36,7 +36,7 @@ function Wrapper({ title, styles, children }) {
   }, []);
 
   return (
-    <div className={cx("main", animation)} ref={ref} onClick={handleHide}>
+    <div id="wrapper" className={cx("main", animation)} ref={ref} onClick={handleHide}>
       <div className={cx("inner")} style={{ ...styles }}>
         <p className={cx("title")}>{title}</p>
         {children}

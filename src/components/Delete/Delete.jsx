@@ -16,6 +16,8 @@ function Delete() {
       handleSuccess("Xoá thành công");
     } catch (e) {
       handleError(e.message);
+    } finally {
+      document.getElementById("wrapper").click();
     }
   };
 

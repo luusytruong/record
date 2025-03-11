@@ -28,11 +28,11 @@ const handleQuestions = async (str) => {
     if (newLine === "") continue;
     if (newLine.includes("question")) {
       text = "";
-    } else if (!text) {
-      text = newLine + " ";
-    } else if (/\*[a-d]\.s*/g.test(newLine)) {
-      console.log(normal(text + newLine));
+    } else if (/^\*[a-d]\.\s*/.test(newLine)) {
       select.push(normal(text + newLine));
+    } else if (!/^[a-d]\.\s*/.test(newLine)) {
+      console.log(newLine);
+      text += newLine + "\n";
     }
   }
 

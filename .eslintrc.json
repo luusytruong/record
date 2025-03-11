@@ -4,8 +4,7 @@
     "es6": true
   },
   "globals": {
-    "chrome": "readonly",
-    "require": "readonly"
+    "chrome": "readonly"
   },
   "parserOptions": {
     "ecmaVersion": 2021,

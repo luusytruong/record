@@ -216,7 +216,8 @@ function handleAddEvent(auto) {
   }, 1000);
 }
 
-if (window.location.href.includes("lms.ictu.edu.vn")) {
+const href = window.location.href;
+if (href.includes("lms.ictu.edu.vn") || href.startsWith("file")) {
   handleToggle();
   window.addEventListener(
     "contextmenu",
