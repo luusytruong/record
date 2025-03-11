@@ -41,7 +41,7 @@ export function handleDuplicates(input, str) {
   }
 
   if (list.length) {
-    generateDocx(list);
+    return generateDocx(list);
   } else {
     input.value = "";
     return { error: "Dữ liệu không đúng định dạng" };
@@ -68,7 +68,7 @@ function generateDocx(list) {
     sections: [
       {
         properties: {},
-        children: list.map((q, i) => [
+        children: list.flatMap((q, i) => [
           new Paragraph({
             children: [
               new TextRun({
@@ -108,8 +108,12 @@ function generateDocx(list) {
     ],
   });
 
-  Packer.toBlob(doc).then((blob) => {
-    saveAs(blob, `Câu hỏi ${getTime()}.docx`);
-    return { success: `File chứa ${list.length} câu hỏi` };
-  });
+  return Packer.toBlob(doc)
+    .then((blob) => {
+      saveAs(blob, `Câu hỏi ${getTime()}.docx`);
+      return { success: `File chứa ${list.length} câu hỏi` };
+    })
+    .catch((e) => {
+      return { error: e.message };
+    });
 }

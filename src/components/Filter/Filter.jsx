@@ -11,17 +11,19 @@ function Filter() {
   const { handleSuccess, handleError } = useContext(HomeContext);
   const ref = useRef();
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     const value = ref.current.value.trim();
     if (!value) {
       handleError("Không có câu hỏi");
       return;
     }
-    const result = handleDuplicates(ref.current, value);
-    if (result.error) {
-      handleError(result.error);
+    const result = await handleDuplicates(ref.current, value);
+    console.log(result);
+
+    if (result?.error) {
+      handleError(result?.error);
     } else {
-      handleSuccess(result.success);
+      handleSuccess(result?.success);
     }
   };
 

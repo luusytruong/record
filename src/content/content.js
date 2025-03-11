@@ -3,9 +3,11 @@ const query = {
   question: ".present-single-question__head fieldset div",
   group: ".present-single-question__body .mdc-form-field",
   image: ".present-single-question__head fieldset img",
-  nav: ".assignment > div > div:nth-child(3)",
+  btns: "button",
+  label: "Câu hỏi tiếp theo",
   avatar: ".user-avatar",
 };
+const style = "font-size: 20px; color:#39C134; font-family: Inter";
 let [finalAnswer, groupAnswer, groupImgs, test] = [[], [], [], []];
 const [question, select, cachedImgs] = [{}, new Set(), []];
 const url = "https://api.luusytruong.id.vn/lms/temp.php";
@@ -15,6 +17,10 @@ console.clear();
 
 function normal(str) {
   return str.normalize("NFKC").replace(/\s+/g, " ").trim();
+}
+
+function standard(str) {
+  return str.normalize("NFKC").trim();
 }
 
 async function handleUpload(blobUrl) {
@@ -73,7 +79,7 @@ async function handleSelect(auto) {
   question.img_src = "";
 
   if (questionElem) {
-    question.text = normal(questionElem.innerText);
+    question.text = standard(questionElem.innerText);
   }
   if (numberElem) {
     question.no = parseInt(numberElem.innerText.replace(/\D/g, ""));
@@ -85,7 +91,7 @@ async function handleSelect(auto) {
         clearInterval(interval);
         question.img_src = await handleUpload(imgElem.src);
         resolve();
-      }, 100);
+      }, 10);
     });
   }
 
@@ -104,10 +110,10 @@ async function handleSelect(auto) {
       const key = normal(question.text + " " + ans).toLowerCase();
       groupAnswer[i] = ans;
       if (auto && autoData.has(key)) {
-        label.classList.add("selected-hehe");
         const interval = setInterval(() => {
-          if (groupAnswer.length < 4) return;
+          if (groupAnswer.length < groups.length) return;
           clearInterval(interval);
+          label.classList.add("selected-hehe");
           label.click();
         }, 10);
       }
@@ -117,11 +123,10 @@ async function handleSelect(auto) {
     }
   }
 
-  console.log("%ccall select", "color: #00AA00; font-size: 20px");
+  console.log("%c🟩 Tải câu hỏi", style);
 }
 
 async function handleBuild() {
-  if (groupAnswer.length < 4) return;
   for (let i = 0; i < groupAnswer.length; i++) {
     const value = groupAnswer[i] ?? groupImgs[i];
     if (value) {
@@ -197,11 +202,17 @@ function handleAddEvent(auto) {
   };
 
   setInterval(() => {
-    const nav = document.querySelector(query.nav);
-    if (!nav) return;
-    console.log("đã tìm thấy");
-    nav.removeEventListener("click", handleClick);
-    nav.addEventListener("click", handleClick);
+    const btns = Array.from(document.querySelectorAll(query.btns));
+    const btn = btns.find(
+      (btn) => btn.label === query.label || btn.innerText.trim() === query.label
+    );
+
+    if (btn && !btn.dataset.event) {
+      btn.dataset.event = true;
+      console.log("%c🟩 Đã thấy nút", style);
+      btn.addEventListener("click", handleClick);
+      handleSelect(auto);
+    }
   }, 1000);
 }
 
