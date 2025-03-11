@@ -1,0 +1,44 @@
+{
+    "manifest_version": 3,
+    "name": "Record",
+    "version": "2024.12.07.45",
+    "description": "The extension developed by @syluu records the questions and selected answers during tests on the LMS ICTU.",
+    "action": {
+        "default_popup": "/build/index.html",
+        "default_icon": {
+            "16": "assets/icons/icon16.png",
+            "32": "assets/icons/icon32.png",
+            "64": "assets/icons/icon64.png",
+            "128": "assets/icons/icon128.png"
+        }
+    },
+    "options_page": "/build/index.html",
+    "permissions": [
+        "activeTab",
+        "tabs",
+        "scripting",
+        "storage",
+        "clipboardWrite",
+        "clipboardRead",
+        "background"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "build/static/js/content.js"
+            ],
+            "css": [
+                "assets/css/style.css"
+            ]
+        }
+    ],
+    "icons": {
+        "16": "assets/icons/icon16.png",
+        "32": "assets/icons/icon32.png",
+        "64": "assets/icons/icon64.png",
+        "128": "assets/icons/icon128.png"
+    }
+}
