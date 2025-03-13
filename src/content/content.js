@@ -10,10 +10,8 @@ const query = {
 const style = "font-size: 20px; color:#39C134; font-family: Inter";
 let [finalAnswer, groupAnswer, groupImgs, test] = [[], [], [], []];
 const [question, select, cachedImgs] = [{}, new Set(), []];
-const url = "https://api.luusytruong.id.vn/lms/temp.php";
+const url = "https://luusytruong.id.vn/api/lms/temp.php";
 const label = ["A. ", "B. ", "C. ", "D. "];
-
-console.clear();
 
 function normal(str) {
   return str.normalize("NFKC").replace(/\s+/g, " ").trim();
@@ -43,7 +41,7 @@ async function handleUpload(blobUrl) {
     const result = await response.json();
     if (result.src) {
       cachedImgs.push({ name: fileName, src: result.src });
-      console.log("thành công");
+      console.log("up load thành công");
       return result.src;
     }
     throw new Error(`Lỗi: ${result}`);
@@ -66,7 +64,6 @@ function handleChange(e) {
 }
 
 async function handleSelect(auto) {
-  if (!auto) return;
   const data = await handleGet("auto");
   const autoData = new Set(data);
   const groups = document.querySelectorAll(query.group);
@@ -142,40 +139,57 @@ async function handleBuild() {
 }
 
 async function handleSet(key, data) {
+  if (typeof chrome === "undefined" || !chrome.storage) {
+    console.error("Lỗi: không phải môi trường extension");
+    return false;
+  }
+
   try {
-    if (typeof chrome !== "undefined" && chrome.storage) {
+    const result = await new Promise((resolve, reject) => {
       chrome.storage.local.set({ [key]: data }, () => {
-        console.log(`Lưu thành công với key: ${key}`);
+        const error = chrome.runtime.lastError;
+        if (error) {
+          console.error(`Lỗi storage: ${error.message}`);
+          reject(error);
+        } else {
+          resolve(true);
+        }
       });
-    } else {
-      console.error("Lỗi: không phải môi trường extension");
-    }
+    });
+
+    console.log(`Lưu thành công với key: ${key}`);
+    return result;
   } catch (e) {
-    console.error("handle save: " + e.message);
+    console.error(`Lỗi khi thao tác storage - ${key}:`, e.message);
+    return false;
   }
 }
 
 async function handleGet(key) {
-  if (typeof chrome === "undefined" && !chrome.storage) {
+  if (typeof chrome === "undefined" || !chrome.storage) {
     console.error("Lỗi: không phải môi trường extension");
-    return;
+    return null;
   }
-  return new Promise((resolve, reject) => {
-    try {
+
+  try {
+    const result = await new Promise((resolve, reject) => {
       chrome.storage.local.get([key], (result) => {
-        if (result[key]) {
-          console.log(`Lấy thành công với key: ${key}`);
-          resolve(result[key]);
+        const error = chrome.runtime.lastError;
+        if (error) {
+          console.error(`Lỗi storage: ${error.message}`);
+          reject(error);
         } else {
-          console.log(`Lấy thất bại với key: ${key}`);
-          resolve([]);
+          resolve(result[key] || null);
         }
       });
-    } catch (e) {
-      console.error("handle Get: " + e.message);
-      reject(e);
-    }
-  });
+    });
+
+    console.log(`Lấy thành công với key: ${key}`);
+    return result;
+  } catch (e) {
+    console.error(`Lỗi khi thao tác storage - ${key}:`, e.message);
+    return null;
+  }
 }
 
 async function handleToggle() {
@@ -216,9 +230,24 @@ function handleAddEvent(auto) {
   }, 1000);
 }
 
+function enableCopy() {
+  document.addEventListener("keydown", (event) => {
+    if (event.ctrlKey && event.key === "c") {
+      const selection = window.getSelection().toString();
+      if (selection) {
+        navigator.clipboard.writeText(selection).catch((err) => {
+          console.error("Không thể sao chép:", err);
+        });
+      }
+    }
+  });
+}
+
 const href = window.location.href;
 if (href.includes("lms.ictu.edu.vn") || href.startsWith("file")) {
   handleToggle();
+  enableCopy();
+  console.clear();
   window.addEventListener(
     "contextmenu",
     function (e) {

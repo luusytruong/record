@@ -7,7 +7,7 @@ import { HomeContext } from "~/context/HomeContext";
 import { getStorage } from "~/utils/chrome";
 
 const cx = classNames.bind(styles);
-
+const BASE_URL = "https://luusytruong.id.vn/api/lms/uploads/";
 const dataTest = [
   {
     no: 1,
@@ -52,7 +52,12 @@ const renderQuestionImg = (img = "") => {
   return !img ? null : img?.error ? (
     <img className={cx("question-img")} src={errorImg} alt=" " onCopy={null} />
   ) : (
-    <img className={cx("question-img")} src={img} alt=" " onCopy={null} />
+    <img
+      className={cx("question-img")}
+      src={BASE_URL + img}
+      alt=" "
+      onCopy={null}
+    />
   );
 };
 
