@@ -28,7 +28,7 @@
                 "<all_urls>"
             ],
             "js": [
-                "build/static/js/content.js"
+                "src/content/content.js"
             ],
             "css": [
                 "assets/css/style.css"

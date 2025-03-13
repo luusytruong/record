@@ -18,7 +18,6 @@ function Filter() {
       return;
     }
     const result = await handleDuplicates(ref.current, value);
-    console.log(result);
 
     if (result?.error) {
       handleError(result?.error);

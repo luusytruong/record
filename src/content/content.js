@@ -17,10 +17,6 @@ function normal(str) {
   return str.normalize("NFKC").replace(/\s+/g, " ").trim();
 }
 
-function standard(str) {
-  return str.normalize("NFKC").trim();
-}
-
 async function handleUpload(blobUrl) {
   const fileName = blobUrl.split("/").pop();
   const existFile = cachedImgs.find((img) => img.name === fileName);
@@ -46,7 +42,6 @@ async function handleUpload(blobUrl) {
     }
     throw new Error(`Lỗi: ${result}`);
   } catch (e) {
-    console.error(e);
     return { error: true };
   }
 }
@@ -63,7 +58,9 @@ function handleChange(e) {
   handleBuild();
 }
 
-async function handleSelect(auto) {
+async function handleSelect() {
+  const setting = await handleGet("settings");
+  if (!setting?.toggle) return;
   const data = await handleGet("auto");
   const autoData = new Set(data);
   const groups = document.querySelectorAll(query.group);
@@ -76,7 +73,7 @@ async function handleSelect(auto) {
   question.img_src = "";
 
   if (questionElem) {
-    question.text = standard(questionElem.innerText);
+    question.text = normal(questionElem.innerText);
   }
   if (numberElem) {
     question.no = parseInt(numberElem.innerText.replace(/\D/g, ""));
@@ -104,9 +101,9 @@ async function handleSelect(auto) {
     }
     if (label && label.innerText !== "") {
       const ans = normal(label.innerText);
-      const key = normal(question.text + " " + ans).toLowerCase();
+      const key = (question.text + " " + ans).toLowerCase();
       groupAnswer[i] = ans;
-      if (auto && autoData.has(key)) {
+      if (setting?.auto && autoData.has(key)) {
         const interval = setInterval(() => {
           if (groupAnswer.length < groups.length) return;
           clearInterval(interval);
@@ -120,7 +117,7 @@ async function handleSelect(auto) {
     }
   }
 
-  console.log("%c🟩 Tải câu hỏi", style);
+  console.log("%c✅ Tải câu hỏi", style);
 }
 
 async function handleBuild() {
@@ -192,26 +189,17 @@ async function handleGet(key) {
   }
 }
 
-async function handleToggle() {
-  const setting = await handleGet("settings");
+function handleAddEvent() {
   const versionLabel = document.querySelector(".app-version");
-
-  if (!setting?.toggle) return;
   if (versionLabel) {
     versionLabel.addEventListener("click", () => {
-      handleSelect(setting?.auto);
+      handleSelect();
     });
   }
-  handleAddEvent(setting?.auto);
-}
 
-function handleAddEvent(auto) {
   const handleClick = () => {
-    if (handleClick.debouncing) return;
-    handleClick.debouncing = true;
     setTimeout(() => {
-      handleSelect(auto);
-      handleClick.debouncing = false;
+      handleSelect();
     }, 100);
   };
 
@@ -223,9 +211,9 @@ function handleAddEvent(auto) {
 
     if (btn && !btn.dataset.event) {
       btn.dataset.event = true;
-      console.log("%c🟩 Đã thấy nút", style);
+      console.log("%c✅ Đã thấy nút", style);
       btn.addEventListener("click", handleClick);
-      handleSelect(auto);
+      handleSelect();
     }
   }, 1000);
 }
@@ -245,7 +233,7 @@ function enableCopy() {
 
 const href = window.location.href;
 if (href.includes("lms.ictu.edu.vn") || href.startsWith("file")) {
-  handleToggle();
+  handleAddEvent();
   enableCopy();
   console.clear();
   window.addEventListener(

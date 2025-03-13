@@ -20,21 +20,29 @@ export function handleDuplicates(input, str) {
   };
 
   for (const line of lines) {
-    const trimmedLine = line.trim();
-    if (trimmedLine === "") continue;
-
-    if (trimmedLine.includes("Question")) {
+    const trimLine = line.trim();
+    if (trimLine === "") continue;
+    if (trimLine.includes("Question")) {
+      if (question.text && question.option.length > 1) {
+        question.text = question.text.trim();
+        const key = handleKey(question.text, question.option);
+        if (!keys.has(key)) {
+          list.push({ ...question });
+          keys.add(key);
+        }
+      }
       question = { text: "", option: [] };
-    } else if (/\*?[A-D]\.\s*/g.test(trimmedLine)) {
-      question.option.push(trimmedLine);
-    } else {
-      question.text += trimmedLine + "\n";
+    } else if (!question.text) {
+      question.text = trimLine;
+    } else if (/\*?[A-D]\.\s*/g.test(trimLine)) {
+      question.option.push(trimLine);
     }
+  }
 
-    if (question.option.length === 4) {
-      question.text = question.text.trim();
-      const key = handleKey(question.text, question.option);
-      if (keys.has(key)) continue;
+  if (question.text && question.option.length > 1) {
+    question.text = question.text.trim();
+    const key = handleKey(question.text, question.option);
+    if (!keys.has(key)) {
       list.push({ ...question });
       keys.add(key);
     }
@@ -48,8 +56,8 @@ export function handleDuplicates(input, str) {
   }
 }
 
-function generateDocx(list) {
-  const size = 28;
+async function generateDocx(list) {
+  const size = 24;
   const font = "Times New Roman";
 
   const getTime = () => {
@@ -61,7 +69,7 @@ function generateDocx(list) {
     const minute = date.getMinutes();
     const second = date.getSeconds();
 
-    return `ngày ${day}_${month}_${year} lúc ${hour}_${minute}_${second}`;
+    return `${day}_${month}_${year}_${hour}_${minute}_${second}`;
   };
 
   const doc = new Document({
@@ -108,12 +116,11 @@ function generateDocx(list) {
     ],
   });
 
-  return Packer.toBlob(doc)
-    .then((blob) => {
-      saveAs(blob, `Câu hỏi ${getTime()}.docx`);
-      return { success: `File chứa ${list.length} câu hỏi` };
-    })
-    .catch((e) => {
-      return { error: e.message };
-    });
+  try {
+    const blob = await Packer.toBlob(doc);
+    saveAs(blob, `file-${list.length}-questions-${getTime()}.docx`);
+    return { success: `File chứa ${list.length} câu hỏi` };
+  } catch (e) {
+    return { error: e.message };
+  }
 }
