@@ -9,6 +9,7 @@ export const HomeContext = createContext();
 
 export function HomeProvider({ children }) {
   const [key, setKey] = useState(0);
+  const [test, setTest] = useState([]);
   const [toast, setToast] = useState(null);
   const [overlay, setOverlay] = useState(false);
   const [animation, setAnimation] = useState("show-opacity");
@@ -62,12 +63,14 @@ export function HomeProvider({ children }) {
   return (
     <HomeContext.Provider
       value={{
+        key,
+        test,
+        setTest,
+        handleReload,
         handleSuccess,
         handleError,
         showOverlay,
         hideOverlay,
-        key,
-        handleReload,
       }}
     >
       {overlay ? <div className={cx("overlay", animation)}></div> : null}

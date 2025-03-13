@@ -14,11 +14,12 @@ function NavItem({ data = [] }) {
       {data?.map((item, index) => (
         <li key={index} className={cx("nav-item")}>
           <NavLink
+            id={item?.id}
             className={cx("nav-link")}
             to={item?.to}
             onClick={index ? item?.onClick : handleReload}
           >
-            {item?.icon ? <i className={cx("fa-solid", item?.icon)}></i> : null}
+            {item?.icon}
             <span className={cx(item?.tooltip ? "tooltip" : "label")}>
               {item?.title}
             </span>

@@ -2,7 +2,7 @@ import React from "react";
 import classNames from "classnames/bind";
 import styles from "./Question.module.scss";
 import errorImg from "~/assets/images/error.png";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { HomeContext } from "~/context/HomeContext";
 import { getStorage } from "~/utils/chrome";
 
@@ -37,7 +37,7 @@ const dataTest = [
   },
 ];
 
-const renderQuestionText = (text = "") => {
+function renderQuestionText(text = "") {
   return text
     .split("\n")
     .filter((line) => line.trim() !== "")
@@ -46,9 +46,9 @@ const renderQuestionText = (text = "") => {
         {line}
       </p>
     ));
-};
+}
 
-const renderQuestionImg = (img = "") => {
+function renderQuestionImg(img = "") {
   return !img ? null : img?.error ? (
     <img className={cx("question-img")} src={errorImg} alt=" " onCopy={null} />
   ) : (
@@ -59,9 +59,9 @@ const renderQuestionImg = (img = "") => {
       onCopy={null}
     />
   );
-};
+}
 
-const renderOption = (option = [], select = []) => {
+function renderOption(option = [], select = []) {
   const set = new Set(select);
   return option?.map((option, i) => {
     if (option.type === "img") {
@@ -80,11 +80,11 @@ const renderOption = (option = [], select = []) => {
       );
     }
   });
-};
+}
 
 function Question() {
-  const [test, setTest] = useState([]);
-  const { key, handleSuccess, handleError } = useContext(HomeContext);
+  const { key, test, setTest, handleSuccess, handleError } =
+    useContext(HomeContext);
 
   useEffect(() => {
     getStorage("test")

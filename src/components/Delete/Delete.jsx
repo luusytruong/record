@@ -8,12 +8,11 @@ import { useContext } from "react";
 const cx = classNames.bind(styles);
 
 function Delete() {
-  const { handleSuccess, handleError } = useContext(HomeContext);
+  const { handleError } = useContext(HomeContext);
 
   const handleConfirm = async () => {
     try {
       await setStorage("test", []);
-      handleSuccess("Xoá thành công");
     } catch (e) {
       handleError(e.message);
     } finally {

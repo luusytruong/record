@@ -5,6 +5,11 @@ import NavItem from "./NavItem/NavItem";
 import { useContext } from "react";
 import { HomeContext } from "~/context/HomeContext";
 import { getClipboard } from "~/utils/upload";
+import { ReactComponent as UploadIcon } from "~/assets/svg/upload.svg";
+import { ReactComponent as ExpandIcon } from "~/assets/svg/expand.svg";
+import { ReactComponent as SettingIcon } from "~/assets/svg/setting.svg";
+import { ReactComponent as FilterIcon } from "~/assets/svg/filter.svg";
+import { ReactComponent as ReloadIcon } from "~/assets/svg/reload.svg";
 
 const cx = classNames.bind(styles);
 
@@ -30,35 +35,36 @@ function Header() {
 
   const navItemData = [
     {
-      icon: "fa-rotate",
+      icon: <ReloadIcon />,
       title: "Tải lại",
       tooltip: true,
+      id: "reload",
       to: "/",
       onClick: null,
     },
     {
-      icon: "fa-expand",
+      icon: <ExpandIcon />,
       title: "Mở rộng",
       tooltip: true,
       to: "/",
       onClick: handleExpand,
     },
     {
-      icon: "fa-gear",
+      icon: <SettingIcon />,
       title: "Cài đặt",
       tooltip: true,
       to: "/setting",
       onClick: null,
     },
     {
-      icon: "fa-cloud-arrow-up",
+      icon: <UploadIcon />,
       title: "Tải lên",
       tooltip: true,
       to: "/",
       onClick: handleUpload,
     },
     {
-      icon: "fa-filter",
+      icon: <FilterIcon />,
       title: "Bộ lọc",
       tooltip: true,
       to: "/filter",
