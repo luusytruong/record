@@ -59,6 +59,6 @@
     user-select: none !important;
 }
 
-[role="alert"] {
+p-toast {
     display: none !important;
 }
